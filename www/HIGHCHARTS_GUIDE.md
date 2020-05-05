@@ -1,62 +1,69 @@
-# Installation Guide
+# Highcharts for Weather34 (requires WeeWX 3.9.2 or later)
 
-Before you start it is a wise precaution to backup your databases, settings1.php and any customised files you wish to keep.
+Credits: -
 
-This installation guide assumes that you are already reasonably familiar with WeeWX and that it is already installed on your computer along with a webserver, php and curl. For a light-touch webserver.
+Gary (gjr80) whose WeeWX Highcharts extension (https://github.com/gjr80/weewx-highcharts) provided motivation and a start point for this project.
+            
+Jerry Dietrich who did 99% of the heavy lifting by engaging and volunteering his ideas, vision and coding skill at an early stage of this project. This project would certainly not have reached this point without his massive input. Thank you Jerry.
 
-If you have not already done so, you must update your WeeWX installation to version 3.9.2 or later. This is required to facillitate nested copying during the skin install process. Follow the various installation type links on this page http://www.weewx.com/docs/ for instructions on updating. This version of Weather34 is compatible with WeeWX 3.9.2/Python2.7 and WeeWX 4.0.0.bx/Python2.7 or Python3.x (Intructions for WeeWX 4 can be found at https://claydonsweather.org.uk/weewx/docs2). 
+This repository contains the instructions and code to enable Highcharts to be used with the WeeWX version of Weather34 skin as an alternative to the default CanvasJS.
 
-If you are carrying out a fresh install of WeeWX, my own personal preference is to use the setup.py method (http://www.weewx.com/docs/setup.htm). However, this increases the chances of requiring more path edits in the configuration files. Alternatively use one of the dedicated packaged installs (http://www.weewx.com/docs/debian.htm, http://www.weewx.com/docs/redhat.htm, http://www.weewx.com/docs/suse.htm or http://www.weewx.com/docs/macos.htm).
+The following charts have been created: - Temperature, Humidity, Dewpoint, Temp/Hum/Dew, Indoor Temp, Windchill/HeatIndex, Barometer, Wind Speed, Wind Direction, Windrose, Wind Speed/Wind Gust/Wind Direction, UV, Radiation, Radiation/UV, Rainfall, Rainfall Monthly, Luminosity, Lightning, Barometer/Temp/Wind.
 
-* Please familiarise yourself with the location of your WeeWX system files including your bin/user folder, skins folder and weewx.conf file. If you are unsure where to find these, please refer to the installation processes here: - http://www.weewx.com/docs/ which shows various WeeWX installation scenarios.
+Most charts have both weekly (1hour, 6hours, 12hours, 24hours, 36hours and 7days) and yearly (1day, 1week, 1month, 6months and 1year) spans. Please note, the 6month button is only functional when there is at least 6 months data in the database.
 
-IMPORTANT. After installing PHP please make sure you install all the PHP modules appropriate for your version of PHP. Failure to due so may mean that forecasts and current conditions fail to update. This is an example for PHP7.3 modules on a Debian based distribution: -
+The following charts have radial views: Temp, Dewpoint, Humidity, Barometer, Indoor, Derived, Wind Speed
 
-	sudo apt-get install php-cli php-fpm php-json php-sqlite3 php-zip php-gd  php-mbstring php-curl php-xml php-pear php-bcmath
-	sudo apt-get install libapache2-mod-php
-	sudo a2enmod php7.3
-	sudo systemctl restart apache2
+Most charts can change from yearly to weekly to daily by clicking the "hook point" on the graph. If there is no hook point then that chart cannot change. For example Windrose chart does not switch.
 
-* Install PyePhem (https://rhodesmill.org/pyephem/). From the command line depending on the version of Python you use: -
+Different dates can be compared with some charts. If there is a compare dates option in the menu dropdown (context menu, top right) then choosing this option will display a chart that compares the two dates in the From and To fields of the chart.
 
-        sudo python2 -m pip install pyephem or sudo python3 -m pip install pyephem
+Charts can be reloaded by choosing the reload option in the context menu.
 
+Some charts can have realtime updates by choosing the realtime update option in the context menu.
 
-Once completed, make sure you save weewx.conf
+Some charts can be display as radial charts by choosing the radial chart option in the context menu.
 
-* If you have have the CRT extension (Cumulus Real-Time) extension installed, unless you require it for another purpose, you can remove it now. (sudo ./wee_extension --uninstall crt)
+Most charts can be automatically updated at a 1 minute interval by choosing the Auto Update option in the context menu.
 
-* This install process assumes that your are using one of the officially documented WeeWX installs and a typical Apache2 web server configuration of /var/www/html. In this instance, at the end of the installation process your path to thw Weather34 skin will be /var/www/html/weewx/weather34. If your installation deviates from this, you will need to adjust the paths in your weewx.conf after the installation process has taken place.
+Changing the dates in From and To fields will change what is displayed based on what the span is. Most useful when displaying charts with yearly spans
 
-* The default WeeWX extension installer (wee_extension) was not really intended to deal with monolithic structure of the Weather34 skin. It is possible to configure an install package to use wee_extension, but it is a difficult and tedious process to maintain for this skin. I am very gratefully to Jerry Dietrich for writing a new installer specially for Weather34. This installer copies everything to the correct places and automatically configures the correct web server ownerships, permissions and groups etc. The whole process is very fast and your skin will be up and running without having to wait till the end of the first archive cycle. By using the supplied configuration files, setup.py, packaged or MacOS installed versions of WeeWX can be catered for.
+Holding the left mouse down allows the chart to be scrolled left to right within the chosen span. Using this feature with the zoom selector allows a user to drill down into the chart.
 
-* From the command line: - 
+# Setup Instructions for Weather34 Highcharts Option
 
-		git clone https://github.com/steepleian/weewx-Weather34HC.git
-		cd weewx-Weather34HC
-		sudo python w34_installer.py setup_py.conf (or package.conf or macos.conf depending on your WeeWX installation)
-		
-* Alternative install method 1: -
+1. You must select the 'w34highcharts' option for the WeeWX Chart Data field in the Weather34 settings page.
+2. Setting the correct paths. Go to 'w34highcharts/scripts' in the root of your WX-HWS installation and edit the file 'plots_config.js'. The path settings are in the first few lines: -
 
-		Download weewx-Weather34-master.zip from https://github.com/steepleian/weewx-Weather34HC/edit/master/
-		
-		unzip weewx-Weather34-master.zip
-		cd weewx-Weather34-master
-		sudo python w34_installer.py setup_py.conf (or package.conf or macos.conf depending on your WeeWX installation)
-		
-* Alternative install method 2 (if you already have the installer from a previous installation): -
+        var pathweewx = '/weewx/'             //Path from web server home location to weewx directory
+        var pathpws   = '/weather34/'               //Path from web server home location to weather34 directory
+        var pathweewxbin ='/home/weewx/bin'  //Physical path to weewx include files for wee_report_w34 if setup.py installed WeeWX
+        //var pathweewxbin ='/usr/share/weewx'  //Physical path to weewx include files for wee_report_w34 if DEB installed WeeWX
 
-		Download weewx-Weather34-master.zip from https://github.com/steepleian/weewx-Weather34HC/edit/master/ into the folder where w34_installer.py is already located
-	        
-		sudo python w34_installer.py setup_py.conf (or package.conf or macos.conf depending on your WeeWX installation)		
-		
-* Restart WeeWX.
+        var realtimefile =  pathweewx   + "w34realtime.txt";    //Location of real-time data from web server
+        var pathjsonfiles = pathpws + "w34highcharts/json/";                    //Location weewx report output json files from home             location of weewx. DO NOT CHANGE UNLESS YOU CHANGE SKIN DIRECTORY.
 
+        var dayplotsurl =   pathpws   + "w34highcharts/getDayChart.php"; //Location of day reports php file from home location of pws.
+        var pathjsondayfiles = "json_day/";                         //Location day report output json files from home location of where         wee_report_34 run. DO NOT CHANGE UNLESS YOU CHANGE SKIN DIRECTORY.
+        var weereportcmd = "./wee_reports_w34";                     //Command to run wee_report_34. DO NOT CHANGE.
+        
+Ensure that these paths are correct for your installation.        
 
-* You can now test that the template is working by opening it up in your browser. Initially you will see random demo data. Click on the menu button at the top-left corner and select settings. This will open up a web form in which you apply your own settings. Pay particular attention to the location of the w34realtime.txt file being generated on a loop cycle by weeWX. The default location is “/[html_root]/weewx/w34weather/realtime.txt” (for example /var/www/html/weewx/w34weather/w34realtime.txt).
+3. Finally make sure that you have ownership of your weather34 root folder and it contents. From the command line: -
 
-* A new feature is an alternative method of obtaining api data from web services (eg forecasts, metar, etc). This is particularly suitable for those who's servers/isps setups do not allow the weewxcron method. It also allows you to specify the frequency of calls so as not to exceed daily limits or put too much strain on the server. Selection of these services can be made towards the foot of the settings form page. If you use this method you must disable the weewxcron method by reanaming the file weewxcron.php to weewxcron.disabled. If you prefer to continue with the weewxcron method, set the 'Select web service codes' field in the settings form page to a blank (there is a blank option in the drop-down selection list)
+            sudo chown username:www-data -R /your_path_to_weather34_root_folder. 
+            (as an example sudo chown www-data:www-data -R /var/www/html)
+            
+4. Re-start WeeWX. Wait for the first archive period to elapse. Additional folders 'json' and 'json_day' should now have been created in the 'w34highcharts folder'. These contain the day, week and year json data files which are updated every archive period and the json_day files which are updated when you click through data points on the charts. Please note that the json_day/day report feature is not currently available with a local WeeWX remote webserver setup.
+5. Open your website page and click on any of the chart links and a new chart will be displayed.
+6. You will find additional controls which allows you change the time frame and zoom-in on data etc. 
+7. Apart from the many features metioned earlier, the context menu (button top right in each chart) allows the charts to be displayed full screen, printed or saved.
+            
+8. You will notice that not all of the available charts are represented in the links on the alternative index page. If you wish to add or change the links the following format must be used, where '[chart_ID]' is the name of the chart e.g. 'humidityplot and '[time_frame]' is either 'weekly' or 'yearly': -
 
- 
-
-* If you have any issues please raise directly with steepleian@gmail.com.
+            href="<?php echo $chartsource;?>/highcharts.html?chart='[chart_ID]'&span='[time_frame]'&temp='<?php echo $weather['temp_units'];?>'&pressure='<?php echo $weather['barometer_units'];?>'&wind='<?php echo $weather['wind_units'];?>'&rain='<?php echo $weather['rain_units']?>" data-lity >
+            
+            
+            
+            
+Any problems, please raise an Issue in this repository attaching a debug report (see here for details http://www.weewx.com/docs/utilities.htm#wee_debug_utility), your skin.conf files and a syslog tail report covering at least two archive cycles from startup.
