@@ -54,7 +54,7 @@ Ensure that these paths are correct for your installation.
             sudo chown username:www-data -R /your_path_to_weather34_root_folder. 
             (as an example sudo chown www-data:www-data -R /var/www/html)
             
-4. Re-start WeeWX. Wait for the first archive period to elapse. Additional folder 'json' should now have been created in the 'w34highcharts folder'. The 'json_day' folder will be created in the 'w34highcharts-day' folder the first time the user requests a day report either by using compare days or "picking" a day in the past. These contain the day, week and year json data files which are updated every archive period.
+4. Re-start WeeWX. Wait for the first archive period to elapse. Additional folders 'json' and 'json_day' should now have been created in the 'w34highcharts folder'. These contain the day, week and year json data files which are updated every archive period and the json_day files which are updated when you click through data points on the charts. Please note that the json_day/day report feature is not currently available with a local WeeWX remote webserver setup.
 5. Open your website page and click on any of the chart links and a new chart will be displayed.
 6. You will find additional controls which allows you change the time frame and zoom-in on data etc. 
 7. Apart from the many features metioned earlier, the context menu (button top right in each chart) allows the charts to be displayed full screen, printed or saved.
@@ -66,4 +66,4 @@ Ensure that these paths are correct for your installation.
             
             
             
-Any problems, please raise an Issue in this repository 
+Any problems, please raise an Issue in this repository attaching a debug report (see here for details http://www.weewx.com/docs/utilities.htm#wee_debug_utility), your skin.conf files and a syslog tail report covering at least two archive cycles from startup.
