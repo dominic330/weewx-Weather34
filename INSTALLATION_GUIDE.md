@@ -82,4 +82,5 @@ Once completed, make sure you save weewx.conf
 
  
 
-* If you have any issues please raise directly with steepleian@gmail.com.
+* Any problems, please raise an Issue in this repository attaching a debug report (see here for details http://www.weewx.com/docs/utilities.htm#wee_debug_utility), your skin.conf files and a syslog tail report covering at least two archive cycles from startup.
+
