@@ -30,9 +30,6 @@ Changing the dates in From and To fields will change what is displayed based on 
 
 Holding the left mouse down allows the chart to be scrolled left to right within the chosen span. Using this feature with the zoom selector allows a user to drill down into the chart.
 
-A modified index.php page is included with links to some of these charts. You can view a working example at https://claydonsweather.org.uk/hcdemo
-
-
 # Setup Instructions for Weather34 Highcharts Option
 
 1. You must select the 'w34highcharts' option for the WeeWX Chart Data field in the Weather34 settings page.
