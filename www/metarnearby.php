@@ -133,7 +133,7 @@ if ($pressureunit == 'mb' || $pressureunit == 'hPa') {
 <blue><br>Visibility</blue> <br>
 <?php
 if ($distanceunit == 'mi') {
-	echo $metar34vismiles  ," (mimiles)";
+	echo $metar34vismiles  ," (miles)";
 } else {
 	echo $metar34viskm ," (km)";
 }
