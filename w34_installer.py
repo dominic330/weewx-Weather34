@@ -69,7 +69,7 @@ try:
             response = int(raw_input("Enter the NUMBER of the installer config file ").strip())
         except:
             response = int(input("Enter the NUMBER of the installer config file ").strip())
-    conf_file = conf_files[response]
+    conf_file = conf_files[response -1]
     print("Installer Config file " + conf_file + " was chosen.")
     with open(conf_file) as infile:
         d = eval(infile.read().replace("\n", "").replace("\t", ""))
