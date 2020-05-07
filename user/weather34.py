@@ -48,6 +48,12 @@ try:
      import urllib2 as urllib
 except ImportError:
      import urllib.request as urllib
+
+try:
+     from functools import reduce
+except ImportError:
+     pass
+
 import threading
 
 import weewx
