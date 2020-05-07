@@ -49,10 +49,7 @@ try:
 except ImportError:
      import urllib.request as urllib
 
-try:
-     from functools import reduce
-except ImportError:
-     pass
+from functools import reduce
 
 import threading
 
