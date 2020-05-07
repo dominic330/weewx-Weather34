@@ -1,7 +1,6 @@
 from zipfile import ZipFile
 from configobj import ConfigObj
 import distutils.dir_util
-import traceback
 import sys
 import time
 import grp
@@ -18,8 +17,6 @@ def change_permissions_recursive(path_list, paths, paths_values):
             for directory in [os.path.join(root,d) for d in dirs]:
                 os.chmod(directory, 0o755)
                 os.chown(directory, uid, gid)
-                if "json_day" in directory:
-                    os.chmod(directory, 0o777)
             for filename in [os.path.join(root, f) for f in files]:
                 os.chmod(filename, (0o777 if "wee_reports_w34" in filename else 0o755))
                 os.chown(filename, uid, gid)
@@ -131,5 +128,4 @@ try:
         config_data.write()
         print('Done!')
 except Exception as e:
-    traceback.print_exc()
     print (e)
