@@ -1,5 +1,7 @@
 # Troubleshooting Guide
 
+* Issues can be submitted here https://github.com/steepleian/weewx-Weather34/issues
+
 * Before sumitting a new issue, please look through the open and closed issue logs to see if there is previous history of the problem you encountered.
 * When submitting an issue it will help us to deal with your problem more quickly if you can supply the following information and run the listed procedures: -
         
@@ -21,3 +23,4 @@
         
     There is no need to save the various outputs to a file, just cut and paste each one in to seperate issue log comment windows indicating the type of output. 
         
+* Remember Github is all about collaboration. Be precise as possible in the issues you raise or respond to. By being open and transparent we help each other to help ourselves.
