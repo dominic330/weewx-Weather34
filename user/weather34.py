@@ -49,7 +49,7 @@ try:
 except ImportError:
      import urllib.request as urllib
 
-from functools import reduce
+import functools
 
 import threading
 
@@ -377,7 +377,7 @@ class ForecastData():
         try:
             replchars = (" ",""),(".'",""),("'.",""),(".\\",""),("\\.",""),("\'", ""),("\\", ""),('"',""),(";\n", "")
             with open(filename, "r" ) as read_file:
-                config_dict = dict(x.split('=', 1) for x in [reduce(lambda a, kv: a.replace(*kv), replchars, line) for line in read_file if "=" in line])
+                config_dict = dict(x.split('=', 1) for x in [functools.reduce(lambda a, kv: a.replace(*kv), replchars, line) for line in read_file if "=" in line])
         except Exception as err:
             logerr("Failed to open config file or create dictionary: %s, Error: %s" % (filename, err))
             return
@@ -411,7 +411,7 @@ class ForecastData():
         while True:
             try:
                 response = urllib.urlopen(urllib.Request(url, None, {header[0]:":".join(header[1:])}))
-                page = response.read()
+                page = response.read().decode('utf-8')
                 response.close()
             except Exception as err:
                 logerr("Failed getting web service data. URL: %s Header: %s, Error: %s" % (url, header, err))
@@ -476,7 +476,7 @@ class Weather34RealTime(StdService):
         self.forecast = ZambrettiForecast(config_dict)
         loginf("zambretti forecast: %s" % self.forecast.is_installed())
 
-        ForecastData(config_dict.get('Weather34WebServices', {}).get('filename', '/var/www/html/weewx/settings1.php'))
+        ForecastData(config_dict.get('Weather34WebServices', {}).get('filename', '/var/www/html/weewx/weatherw34/settings1.php'))
         
         # setup caching
         self.cache_enable = True 
