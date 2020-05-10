@@ -1,6 +1,7 @@
 from zipfile import ZipFile
 from configobj import ConfigObj
 import distutils.dir_util
+import traceback
 import sys
 import time
 import grp
@@ -71,7 +72,7 @@ try:
             response = int(raw_input("Enter the NUMBER of the installer config file ").strip())
         except:
             response = int(input("Enter the NUMBER of the installer config file ").strip())
-    conf_file = conf_files[response -1]
+    conf_file = conf_files[response]
     print("Installer Config file " + conf_file + " was chosen.")
     with open(conf_file) as infile:
         d = eval(infile.read().replace("\n", "").replace("\t", ""))
@@ -99,8 +100,8 @@ try:
             for i in range(0, len(copy_list), 2):
                 distutils.dir_util.copy_tree(os.path.join(extract_path, copy_list[i+1].strip()), copy_list[i].strip(), update = do_overwrite)
         locations = {copy_list[i+1]:copy_list[i] for i in range(0, len(copy_list), 2)}
-        paths = ["var pathweewx = ", "var pathpws = ", "var pathweewxbin = "]
-        paths_values = ["/" + locations["www"].split("/var/www/html/")[1].split("/")[0] + "/", locations["www"].split("/var/www/html")[1], locations["user"].split("/user/")[0]]
+        paths = ["var pathweewx = ", "var pathpws = ", "var pathweewxbin = "]     
+        paths_values = ["/weewx" + locations["www"].split("weewx")[1].split("/")[0] + "/", '/weewx' + locations["www"].split("weewx")[1], locations["user"].split("/user/")[0]]
         change_permissions_recursive([locations["www"]], paths, paths_values)
         if d["delete_extracted_files"] == "True":
             if extract_path != os.getcwd():
@@ -130,4 +131,5 @@ try:
         config_data.write()
         print('Done!')
 except Exception as e:
+    traceback.print_exc()
     print (e)
