@@ -49,6 +49,7 @@
 	$weather["dewpoint"]           = number_format($weewxapi[4],1);
 	$weather["rain_today"]         = $weewxapi[9];
 	$weather["rain_lasthour"]      = $weewxapi[47];
+        $weather["rain_last3hours"]    = $weewxapi[202];
 	$weather["rain_month"]         = $weewxapi[19];
 	$weather["rain_year"]          = $weewxapi[20];
 	$weather["rain_24hrs"]         = $weewxapi[44];
@@ -69,9 +70,9 @@
 	$weather["wind_speed_avg"]     = $weewxapi[5]; //Console's Average Wind Speed
 	$weather["wind_direction"]     = number_format($weewxapi[7],0);
 	$weather["wind_direction_avg"] = number_format($weewxapi[46],0);
-	$weather["wind_speed"]         = number_format($weewxapi[6]); // Instant Wind Speed
-	$weather["wind_gust_10min"]    = $weewxapi[201]; // Wind Speed Gust - Max speed of last 10 minutes
-	$weather["wind_gust_speed"]    = $weewxapi[40]; // 
+	$weather["wind_speed"]         = $weewxapi[6]; // Instant Wind Speed
+	$weather["wind_gust_60min"]    = $weewxapi[201]; // Wind Speed Gust - Max speed of last 60 minutes
+	$weather["wind_gust_speed"]    = $weewxapi[40]; // 10 Minutes
 	$weather["wind_speed_bft"]     = $weewxapi[12];
 	$weather["wind_speed_max"]     = $weewxapi[30];	
 	$weather["wind_gust_speed_max"]= $weewxapi[32];	
@@ -544,6 +545,7 @@ if ($rainunit != $weather["rain_units"]) {
 		inTomm($weather, "rain_year");
 		inTomm($weather, "rainydmax");
 		inTomm($weather, "rain_lasthour");
+                inTomm($weather, "rain_last3hours");
 		inTomm($weather, "rainymax");		
 		inTomm($weather, "rainmmax");
 		inTomm($weather, "rain_24hrs");	
@@ -557,6 +559,7 @@ if ($rainunit != $weather["rain_units"]) {
 		mmToin($weather, "rain_year");
 		mmToin($weather, "rainydmax");
 		mmToin($weather, "rain_lasthour");
+                mmToin($weather, "rain_last3hours");
 		mmToin($weather, "rainymax");		
 		mmToin($weather, "rainmmax");
 		mmToin($weather, "rain_24hrs");
