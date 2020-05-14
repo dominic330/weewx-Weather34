@@ -50,8 +50,9 @@ except ImportError:
      import urllib.request as urllib
 
 import functools
-
 import threading
+import socket
+import subprocess
 
 import weewx
 import weewx.almanac
@@ -418,12 +419,104 @@ class ForecastData():
                 time.sleep(int(time_interval))
                 continue
             try:
-                with open(filename, 'w+') as file:
-                    file.write(str(page))
+                with open(filename, 'w+') as file_handle:
+                    file_handle.write(str(page))
             except Exception as err:
                 logerr("Error writing web service file: %s, Error: %s" % (filename, err))
             time.sleep(int(time_interval))
 
+class RemoteWebserverReport():
+    def __init__(self, config_dict):
+        if config_dict.get('enable') == 'true':
+            thread = threading.Thread(target=self.listen_data_requests, args=(int(config_dict.get('port', 25252)), config_dict.get('address', None)))
+            thread.daemon = True
+            thread.start()
+
+    def listen_data_requests(self, port, host):
+        #Wait for system startup before getting host ip address
+        time.sleep(10)
+        while True:
+            try:
+                if len(host) == 0 or host == None:
+                    host = socket.gethostbyname(socket.gethostname())
+                    if host.startswith('127.'):
+                        host = subprocess.check_output(['hostname', '-s', '-I']).split(" ")[0]
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.bind((host, port))
+                s.listen(2)
+                logdbg("RemoteWebserverReport: weewx host ip " + host + " listening on port " + str(port))
+                break
+            except:
+                time.sleep(5)
+        while True:
+            try:
+                conn, address = s.accept()
+                address = str(address).split(",")[0][1:].replace("'","")
+                logdbg("RemoteWebserverReport: webserver ip " + address)
+                thread = threading.Thread(target=self.execute_report, args=(conn.recv(256).split(" "), conn, host, address))
+                thread.daemon = True
+                thread.start()
+            except Exception as e:
+                if not "timed out" in e:
+                    logdbg(e)
+    
+    def execute_report(self, args, conn, host, address):
+        import weecfg
+        import weewx.station
+        import weewx.reportengine
+        import weeutil.rsyncupload
+        try:
+            logdbg("RemoteWebserverReport: " + str(args))
+            _config_path, config_dict = weecfg.read_config(None, None)
+            ts = float(args[1])
+            html_root = args[3]
+            stn_info = weewx.station.StationInfo(**config_dict['Station'])
+            save_entries = ["SKIN_ROOT","HTML_ROOT","data_binding","log_success","log_failure","w34Highcharts"]
+            for key in config_dict['StdReport']:
+                if key not in save_entries:
+                    del config_dict['StdReport'][key]
+            config_dict['StdReport']['w34Highcharts']['skin'] = 'w34Highcharts-day'
+            config_dict['StdReport']['w34Highcharts']['CheetahGenerator'] =  {'search_list_extensions': 'user.w34highchartsSearchX.w34highcharts_' + args[2].split('/')[-1].split('.')[0], 'encoding': 'strict_ascii', 'ToDate': {'DayJSON': {'template': args[2],'HTML_ROOT': html_root}}}
+            try:
+                binding = config_dict['StdArchive']['data_binding']
+            except KeyError:
+                binding = 'wx_binding'
+            with weewx.manager.DBBinder(config_dict) as db_binder:
+                db_manager = db_binder.get_manager(binding)
+                for _ in range(1500):
+                    record = db_manager.getRecord(ts)
+                    if record == None:
+                        ts = ts + 60
+                    else:
+                        break;
+                if record == None:
+                    ts = db_manager.firstGoodStamp()
+                    record = db_manager.getRecord(ts)
+                weewx.reportengine.StdReportEngine(config_dict, stn_info, record=record, gen_ts=ts).run()
+                logdbg("RemoteWebserverReport: Report complete")
+                if host != address:
+                    try:
+                        weeutil.rsyncupload.RsyncUpload(
+                            local_root=os.path.join(html_root,'json_day'),
+                            remote_root=os.path.join(html_root,'json_day'),
+                            server=self.address,
+                            user=None,
+                            port=None,
+                            ssh_options= None,
+                            compress=False,
+                            delete=False,
+                            log_success=True).run()
+                        logdbg("RemoteWebserverReport: Rsync complete")
+                    except IOError as e:
+                        logerr("RemoteWebserverReport: " + e)
+        except Exception as e:
+            logerr("RemoteWebserverReport: " + e)
+        finally:
+            try:
+                conn.close()
+            except Exception as e:
+                logdbg("RemoteWebserverReport: " + e)
+       
 class Weather34RealTime(StdService):
     """Service retains previous loop packet values updating any value that isn't None from new
     packets. It then replaces the original packet with a new packet that contains all of the values; 
@@ -475,8 +568,16 @@ class Weather34RealTime(StdService):
         # configure forecasting
         self.forecast = ZambrettiForecast(config_dict)
         loginf("zambretti forecast: %s" % self.forecast.is_installed())
-
-        ForecastData(config_dict.get('Weather34WebServices', {}).get('filename', '/var/www/html/weewx/weatherw34/settings1.php'))
+    
+        try:
+            ForecastData(config_dict.get('Weather34WebServices', {}).get('filename', '/var/www/html/weewx/weatherw34/settings1.php'))
+        except Exception as e:
+            logerr(e)
+            
+        try:
+            RemoteWebserverReport(config_dict.get('Weather34RemoteWebServer'))
+        except:
+            logdbg("RemoteWebserverReport: not active")
         
         # setup caching
         self.cache_enable = True 
@@ -514,7 +615,7 @@ class Weather34RealTime(StdService):
         if self.retainedLoopValues == None or len(self.retainedLoopValues) == 0:
             try:
                 if (time.time() - os.path.getmtime(self.cache_file)) < self.cache_stale_time: 
-       	            with open(self.cache_file, 'r') as in_file:
+                    with open(self.cache_file, 'r') as in_file:
                         self.retainedLoopValues = eval(in_file.read())
                 else:
                     loginf("Cache values not use since they are past the sell by date")	
@@ -531,8 +632,8 @@ class Weather34RealTime(StdService):
         event.packet = self.retainedLoopValues.copy()
         #logdbg("Event packet after: %s" % (event.packet,))
         try:
-        	with open(self.cache_file, 'w') as out_file:
-        		out_file.write(str(self.retainedLoopValues))
+            with open(self.cache_file, 'w') as out_file:
+                out_file.write(str(self.retainedLoopValues))
         except Exception as e:
             logerr(str(e))	
 
