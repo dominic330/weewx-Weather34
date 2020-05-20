@@ -515,6 +515,8 @@ function custom_tooltip(tooltip, first_line, lowHigh = false) {
             if (lowHigh){
                 if (points[j].point.high != undefined)
                     temp += '<span style="color: '+points[j].series.color+'">' + getTranslation(points[j].series.name) + ': ' + getTranslation('Lowest') + ' ' + parseFloat(points[j].y.toFixed(2)) + ' ' + getTranslation('Highest') + ' ' + parseFloat(points[j].point.high.toFixed(2)) + points[j].series.tooltipOptions.valueSuffix + '</span><br/>';
+                else
+                    temp += '<span style="color: '+points[j].series.color+'">' + getTranslation(points[j].series.name) + ': ' + parseFloat(points[j].y.toFixed(2)) + points[j].series.tooltipOptions.valueSuffix + '</span><br/>';
             }else
                 temp += '<span style="color: '+points[j].series.color+'">' + getTranslation(points[j].series.name) + ': ' + parseFloat(points[j].y.toFixed(2)) + points[j].series.tooltipOptions.valueSuffix + '</span><br/>';
             if (temp1.length > 0 && i == order.length/2 -1)
@@ -543,7 +545,7 @@ function create_chart_options(options, type, title, valueSuffix, values, first_l
     options.series = [];
     options.chart.type = type;
     if (first_line != null)
-        options.tooltip.formatter = function() {return custom_tooltip(this, first_line)};
+        options.tooltip.formatter = function() {return custom_tooltip(this, first_line, type=='columnrange' ? true : false)};
     if (valueSuffix != null) options.tooltip.valueSuffix = valueSuffix;
     options.xAxis[0].minTickInterval = do_realtime ? 450000 : 900000;
     options.title = {text: getTranslation(title)};
@@ -602,8 +604,8 @@ function create_temperature_chart(options, span, seriesData, units){
     if (do_radial){
         var dataMinMax = [];
         var dataAvg = [];
-        dataMinMax.push(convert_temp(seriesData[0].temperatureplot.units, units.temp, reinflate_time(seriesData[0].temperatureplot.outTempminmax)));
-        dataMinMax.push(convert_temp(seriesData[0].dewpointplot.units, units.temp, reinflate_time(seriesData[0].dewpointplot.dewpointminmax)));
+        dataMinMax.push(convert_temp(seriesData[0].temperatureplot.units, "C", reinflate_time(seriesData[0].temperatureplot.outTempminmax)));
+        dataMinMax.push(convert_temp(seriesData[0].dewpointplot.units, "C", reinflate_time(seriesData[0].dewpointplot.dewpointminmax)));
         dataAvg.push(convert_temp(seriesData[0].temperatureplot.units, "C", reinflate_time(seriesData[0].temperatureplot.outTempaverage)));
         dataAvg.push(convert_temp(seriesData[0].dewpointplot.units, "C", reinflate_time(seriesData[0].dewpointplot.dewpointaverage)));
         return do_radial_chart(options, dataMinMax, dataAvg, ['Temperature', 'Dewpoint'], tempcolors);
@@ -647,7 +649,7 @@ function create_indoor_chart(options, span, seriesData, units){
     if (do_radial){
         var dataMinMax = [];
         var dataAvg = [];
-        dataMinMax.push(convert_temp(seriesData[0].temperatureplot.units, units.temp, reinflate_time(seriesData[0].temperatureplot.inTempminmax)));
+        dataMinMax.push(convert_temp(seriesData[0].temperatureplot.units, "C", reinflate_time(seriesData[0].temperatureplot.inTempminmax)));
         dataAvg.push(convert_temp(seriesData[0].temperatureplot.units, "C", reinflate_time(seriesData[0].temperatureplot.inTempaverage)));
         return do_radial_chart(options, dataMinMax, dataAvg, ['Temperature'], tempcolors);
     }
@@ -712,8 +714,8 @@ function create_tempderived_chart(options, span, seriesData, units){
     if (do_radial){
         var dataMinMax = [];
         var dataAvg = [];
-        dataMinMax.push(convert_temp(seriesData[0].windchillplot.units, units.temp, reinflate_time(seriesData[0].windchillplot.windchillminmax)));
-        dataMinMax.push(convert_temp(seriesData[0].windchillplot.units, units.temp, reinflate_time(seriesData[0].windchillplot.heatindexminmax)));
+        dataMinMax.push(convert_temp(seriesData[0].windchillplot.units, "C", reinflate_time(seriesData[0].windchillplot.windchillminmax)));
+        dataMinMax.push(convert_temp(seriesData[0].windchillplot.units, "C", reinflate_time(seriesData[0].windchillplot.heatindexminmax)));
         dataAvg.push(convert_temp(seriesData[0].windchillplot.units, "C", reinflate_time(seriesData[0].windchillplot.windchillaverage)));
         dataAvg.push(convert_temp(seriesData[0].windchillplot.units, "C", reinflate_time(seriesData[0].windchillplot.heatindexaverage)));
         return do_radial_chart(options, dataMinMax, dataAvg, ['Windchill', 'Heatindex'], tempcolors);
@@ -735,7 +737,7 @@ function create_tempderived_chart(options, span, seriesData, units){
         else
             options = create_chart_options(options, 'spline', 'HeatIndex/Windchill/Temperature', '\xB0' + units.temp, [['HeatIndex', 'spline'],['Windchill','spline'],['Temperature', 'spline'],['Apparent', 'spline',,false,false]]);
         options.series[1].data = convert_temp(seriesData[0].windchillplot.units, units.temp, reinflate_time(seriesData[0].windchillplot.windchill));
-        if (options.series[1].data[0][1] > 50)
+        if (options.series[1].data[0][1] > convert_temp(seriesData[0].windchillplot.units, units.temp, [50])[0])
            options.series[1].visible = false;
         else
            options.series[0].visible = false;
@@ -766,7 +768,7 @@ function create_dewpoint_chart(options, span, seriesData, units){
     if (do_radial){
         var dataMinMax = [];
         var dataAvg = [];
-        dataMinMax.push(convert_temp(seriesData[0].dewpointplot.units, units.temp, reinflate_time(seriesData[0].dewpointplot.dewpointminmax)));
+        dataMinMax.push(convert_temp(seriesData[0].dewpointplot.units, "C", reinflate_time(seriesData[0].dewpointplot.dewpointminmax)));
         dataAvg.push(convert_temp(seriesData[0].dewpointplot.units, "C", reinflate_time(seriesData[0].dewpointplot.dewpointaverage)));
         return do_radial_chart(options, dataMinMax, dataAvg, ["Dewpoint"], tempcolors);
     }
@@ -1677,3 +1679,4 @@ $.datepicker.setDefaults({
         window.location.href= dayplotsurl+"?units="+url_units.temp+","+url_units.pressure+","+url_units.wind+","+url_units.rain+"&plot_type="+url_plot_type+","+pathjsondayfiles+jsonfileforplot[url_plot_type][0]+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+(new Date(this.value).getTime()/1000);
     }
 });
+
