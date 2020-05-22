@@ -33,6 +33,17 @@
 "barometerplot": {
 "barometer": $barometerWeekjson,
 "units": "$unit.label.barometer"#slurp
-}
+},
 ##
+"lightningplot": {
+#if $strikesWeek_json is not None
+"strikesWeek": $strikesWeek_json,
+#end if
+#if $distanceWeek_json is not None
+"distanceWeek": $distanceWeek_json,
+#end if
+#if $energyWeek_json is not None
+"energyWeek": $energyWeek_json
+#end if
+}
 }]
