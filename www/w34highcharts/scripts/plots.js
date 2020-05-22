@@ -76,33 +76,33 @@ var postcreatefunctions = {
 };
 
 var jsonfileforplot = {
-    temperatureplot: [['temp_week.json'],['year.json'],['temp_week1.json']],
-    indoorplot: [['indoor_derived_week.json'],['year.json'],['indoor_derived_week1.json']],
-    tempsmallplot: [['temp_week.json'],['year.json'],[null]],
-    tempallplot: [['temp_week.json'],['year.json'],['temp_week1.json']],
-    tempderivedplot: [['indoor_derived_week.json','temp_week.json'],['year.json'],['indoor_derived_week1.json']],
-    dewpointplot: [['temp_week.json'],['year.json'],['temp_week1.json']],
-    humidityplot: [['temp_week.json'],['year.json'],['temp_week1.json']],
-    barometerplot: [['bar_rain_week.json'],['year.json'],['bar_rain_week1.json']],
-    barsmallplot: [['bar_rain_week.json'],['year.json'],[null]],
-    bartempwindplot: [['bar_rain_week.json','temp_week.json','wind_week.json'],[null],[null]],
-    windbarbplot: [['wind_week.json'],['year.json'],[null]],
-    windplot: [['wind_week.json'],['year.json'],['wind_week1.json']],
-    windsmallplot: [['wind_week.json'],['year.json'],[null]],
-    windallplot: [['wind_week.json'],['year.json'],[null]],
-    winddirplot: [['wind_week.json'],['year.json'],[null]],
-    windroseplot: [['wind_rose_week.json'],['year.json'],[null]],
-    rainplot: [['bar_rain_week.json'],['year.json'],[null]],
-    rainmonthplot: [['year.json'],['year.json'],[null]],
-    rainsmallplot: [['bar_rain_week.json'],['year.json'],[null]],
-    lightningplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
-    luminosityplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
-    radiationplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
-    raduvplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
-    airqualityplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
-    radsmallplot: [['solar_week.json'],['year.json'],[null]],
-    uvplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
-    uvsmallplot: [['solar_week.json'],['year.json'],[null]]
+    temperatureplot: [['temp_week.json'],['year.json']],
+    indoorplot: [['indoor_derived_week.json'],['year.json']],
+    tempsmallplot: [['temp_week.json'],['year.json']],
+    tempallplot: [['temp_week.json'],['year.json']],
+    tempderivedplot: [['indoor_derived_week.json','temp_week.json'],['year.json']],
+    dewpointplot: [['temp_week.json'],['year.json']],
+    humidityplot: [['temp_week.json'],['year.json']],
+    barometerplot: [['bar_rain_week.json'],['year.json']],
+    barsmallplot: [['bar_rain_week.json'],['year.json']],
+    bartempwindplot: [['bar_rain_week.json','temp_week.json','wind_week.json'],[null]],
+    windbarbplot: [['wind_week.json'],['year.json']],
+    windplot: [['wind_week.json'],['year.json']],
+    windsmallplot: [['wind_week.json'],['year.json']],
+    windallplot: [['wind_week.json'],['year.json']],
+    winddirplot: [['wind_week.json'],['year.json']],
+    windroseplot: [['wind_rose_week.json'],['year.json']],
+    rainplot: [['bar_rain_week.json'],['year.json']],
+    rainmonthplot: [['year.json'],['year.json']],
+    rainsmallplot: [['bar_rain_week.json'],['year.json']],
+    lightningplot: [['solar_week.json'],['year.json']],
+    luminosityplot: [['solar_week.json'],['year.json']],
+    radiationplot: [['solar_week.json'],['year.json']],
+    raduvplot: [['solar_week.json'],['year.json']],
+    airqualityplot: [['solar_week.json'],['year.json']],
+    radsmallplot: [['solar_week.json'],['year.json']],
+    uvplot: [['solar_week.json'],['year.json']],
+    uvsmallplot: [['solar_week.json'],['year.json']]
 };
 
 var tempcolors = [[-10,"#3369e7"],[-5,"#3b9cac"],[0,"#00a4b4"],[5,"#00a4b4"],[10,"#88b04b"],[15,"#e6a141"],[20,"#ff7c39"],[25,"#efa80f"],[30,"#d05f2d"],[35,"#d86858"],[40,"#fd7641"],[45,"#de2c52"],[50,"#de2c52"]];
@@ -112,6 +112,7 @@ var windcolors = [[0,"#3369e7"],[2.5,"#3b9cac"],[5,"#00a4b4"],[7.5,"#00a4b4"],[1
 var aqcolors = [[50,"#90b12a"],[100,"#ba923a"],[150,"#ff7c39"],[200,"#ff7c39"],[300,"#916392"],[400,"#d05041"]];
 var plotsnoswitch = ['rainmonthplot','windroseplot','bartempwindplot','windbarplot'];
 var radialplots = ['dewpointplot','temperatureplot','indoorplot','humidityplot','barometerplot','tempderivedplot','windplot','airqualityplot'];
+var compareplots = ['dewpointplot','temperatureplot','tempallplot','indoorplot','humidityplot','barometerplot','tempderivedplot','windplot','lightningplot','luminosityplot','radiationplot','uvplot','airqualityplot'];
 var monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var windrosespans = ["1h","24h","Week","Month","Year"];
 var realtimeXscaleFactor = 300/realtimeinterval;
@@ -733,7 +734,7 @@ function create_tempderived_chart(options, span, seriesData, units){
     }
     else if (span[0] == "weekly"){        
         if (compare_dates)
-            options = create_chart_options(options, 'spline', 'HeatIndex/Windchill', '\xB0' + units.temp, [['HeatIndex', 'spline'],['Windchill','spline'],['Apparent', 'spline',,false,false],['HeatIndex', 'spline',,,,,1],['Windchill','spline',,,,,1],['Apparent', 'spline',,false,false,,1]]);
+            options = create_chart_options(options, 'spline', 'HeatIndex/Windchill/Temperature', '\xB0' + units.temp, [['HeatIndex', 'spline'],['Windchill','spline'],['Temperature', 'spline'],['HeatIndex', 'spline',,,,,1],['Windchill','spline',,,,,1],['Temperature','spline',,,,,1]]);
         else
             options = create_chart_options(options, 'spline', 'HeatIndex/Windchill/Temperature', '\xB0' + units.temp, [['HeatIndex', 'spline'],['Windchill','spline'],['Temperature', 'spline'],['Apparent', 'spline',,false,false]]);
         options.series[1].data = convert_temp(seriesData[0].windchillplot.units, units.temp, reinflate_time(seriesData[0].windchillplot.windchill));
@@ -742,21 +743,16 @@ function create_tempderived_chart(options, span, seriesData, units){
         else
            options.series[0].visible = false;
         options.series[0].data = convert_temp(seriesData[0].windchillplot.units, units.temp, reinflate_time(seriesData[0].windchillplot.heatindex));
-        options.series[2].data = convert_temp(seriesData[0].temperatureplot.units, units.temp, reinflate_time(seriesData[1].temperatureplot.outTemp));
+        options.series[2].data = convert_temp(seriesData[1].temperatureplot.units, units.temp, reinflate_time(seriesData[1].temperatureplot.outTemp));
         if (compare_dates){
-            create_compare_days_ts(options.series[0].data, seriesData[1].windchillplot.windchill);
-            options.series[5].data = convert_temp(seriesData[1].windchillplot.units, units.temp, reinflate_time(seriesData[1].windchillplot.windchill, options.series[0].data[0][0]));
-            options.series[4].data = convert_temp(seriesData[1].windchillplot.units, units.temp, reinflate_time(seriesData[1].windchillplot.heatindex, options.series[0].data[0][0]));
-        }
-        if ("appTemp" in seriesData[0].temperatureplot){
-            options.series[3].data = convert_temp(seriesData[0].temperatureplot.units, units.temp, reinflate_time(seriesData[0].temperatureplot.appTemp));
-            options.series[3].visible = true;
-            options.series[3].showInLegend = true;
-            if (compare_dates){
-                options.series[6].data = convert_temp(seriesData[1].temperatureplot.units, units.temp, reinflate_time(seriesData[1].temperatureplot.appTemp, options.series[0].data[0][0]));
-                options.series[6].visible = true;
-                options.series[6].showInLegend = true;
-            }
+            create_compare_days_ts(options.series[0].data, seriesData[2].windchillplot.windchill);
+            options.series[3].data = convert_temp(seriesData[2].windchillplot.units, units.temp, reinflate_time(seriesData[2].windchillplot.heatindex, options.series[0].data[0][0]));
+            if (options.series[3].data[3][1] > convert_temp(seriesData[2].windchillplot.units, units.temp, [50])[0])
+               options.series[4].visible = false;
+            else
+               options.series[3].visible = false;
+            options.series[4].data = convert_temp(seriesData[2].windchillplot.units, units.temp, reinflate_time(seriesData[2].windchillplot.windchill, options.series[0].data[0][0]));
+            options.series[5].data = convert_temp(seriesData[3].temperatureplot.units, units.temp, reinflate_time(seriesData[3].temperatureplot.outTemp, options.series[0].data[0][0]));
         }
     }
     options.yAxis[0].title.text = "(\xB0" + units.temp + ")";
@@ -1167,7 +1163,7 @@ function create_lightning_chart(options, span, seriesData, units){
         if (compare_dates)
             options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'column',1], ['Energy', 'column',2],['Strikes', 'column',,,,,1], ['Distance', 'column',1,,,,1], ['Energy', 'column',2,,,,1]]);
         else
-            options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'column',1], ['Energy', 'column',2]]);
+            options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'scatter',1], ['Energy', 'scatter',2]]);
         options.series[0].data = reinflate_time(seriesData[0].lightningplot.strikesWeek);
         options.series[1].data = reinflate_time(seriesData[0].lightningplot.distanceWeek);
         options.series[2].data = reinflate_time(seriesData[0].lightningplot.energyWeek);
@@ -1188,12 +1184,6 @@ function create_lightning_chart(options, span, seriesData, units){
     options.yAxis[2].title.text = "Energy";
     options.yAxis[2].allowDecimals = true;
     options.xAxis[0].minTickInterval =0;
-
-    plotOptions: {
-        series: {
-            pointWidth: 20
-        }
-    };
     return options;
 };
 
@@ -1437,7 +1427,7 @@ function create_aq_chart(options, span, seriesData, units){
     }
     options.yAxis[0].min = 0;
     options.yAxis[0].minorTickInterval = 1;
-    options.yAxis[0].title.text = "(?g/?)";
+    options.yAxis[0].title.text = "(μg/㎥)";
     return options;
 };
 
@@ -1484,7 +1474,7 @@ function do_realtime_update(chart, plot_type, units){
         return;
     }
     if (realtimeplot[plot_type][0].length == 0){
-        window.location.href= dayplotsurl+"?units="+units.temp+","+units.pressure+","+units.wind+","+units.rain+"&plot_type="+realtimeplot[plot_type][3]+","+pathjsondayfiles+jsonfileforplot[plot_type][0]+","+weereportcmd+","+reload_plot_type+":"+reload_span+",true"+"&weewxpathbin="+pathweewxbin+"&epoch="+0;
+        window.location.href= dayplotsurl+"?units="+units.temp+","+units.pressure+","+units.wind+","+units.rain+"&plot_type="+realtimeplot[plot_type][3]+","+pathjsondayfiles+","+jsonfileforplot[plot_type][0].join(":")+","+weereportcmd+","+reload_plot_type+":"+reload_span+",true"+"&weewxpathbin="+pathweewxbin+"&epoch="+0;
         return;
     }
     $.get(realtimefile, function(data) {
@@ -1587,9 +1577,9 @@ function display_chart(units, plot_type, span, dplots = false, cdates = false, r
     if (!jsonfileforplot.hasOwnProperty(plot_type) || !(span[0] == "weekly" || span[0] == "yearly")){alert("Bad plot_type (" + plot_type + ") or span (" + span[0] + ")"); return};
     for (var i = 0; i < jsonfileforplot[plot_type][span[0] == "weekly" ? 0 : 1].length; i++,index++)
         files[index] = (day_plots || compare_dates ? pathjsondayfiles : pathjsonfiles) + jsonfileforplot[plot_type][span[0] == "weekly" ? 0 : 1][i];
-    for (var i = 0; i < jsonfileforplot[plot_type][2].length; i++,index++)
-        if (compare_dates && jsonfileforplot[plot_type][2] != null)
-            files[index] = pathjsondayfiles + jsonfileforplot[plot_type][2][i];
+    for (var i = 0; i < jsonfileforplot[plot_type][0].length; i++,index++)
+        if (compare_dates && compareplots.includes(plot_type))
+            files[index] = pathjsondayfiles + jsonfileforplot[plot_type][0][i].split(".")[0] + "1.json";
     if (buttons == null){
         function callback(units, plot_type, span, buttonReload){return function(){
                                     if (buttonReload){
@@ -1632,7 +1622,7 @@ function display_chart(units, plot_type, span, dplots = false, cdates = false, r
                                             break;
                                         }
                                     chart.showLoading('Loading data from database...');
-                                    window.location.href= dayplotsurl+"?units="+units.temp+","+units.pressure+","+units.wind+","+units.rain+"&plot_type="+plot_type+","+pathjsondayfiles+jsonfileforplot[plot_type][0]+","+weereportcmd+","+pathjsondayfiles+jsonfileforplot[plot_type][2]+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+epoch+"&epoch1="+epoch1}};
+                                    window.location.href= dayplotsurl+"?units="+units.temp+","+units.pressure+","+units.wind+","+units.rain+"&plot_type="+plot_type+","+pathjsondayfiles+","+jsonfileforplot[plot_type][0].join(":")+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+epoch+"&epoch1="+epoch1}};
         buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
         buttons.push({text: "Reload Chart", onclick: callback(units, plot_type, span, true)});
         buttons.push({text: "Auto Update Chart OFF", onclick: callback(units, plot_type, span, false)});
@@ -1640,7 +1630,7 @@ function display_chart(units, plot_type, span, dplots = false, cdates = false, r
             buttons.push({text: "Realtime Update", onclick: realtime_callback()});
         if (radialplots.includes(plot_type))
             buttons.push({text: "Radial Chart", onclick: radial_callback()});
-        if (jsonfileforplot[plot_type][2][0] != null)
+        if (compareplots.includes(plot_type))
             buttons.push({text: "Compare Dates", onclick: compare_callback()});
     }
     jQuery.getMultipleJSON(...files).done(function(...results){
@@ -1682,7 +1672,7 @@ function display_chart(units, plot_type, span, dplots = false, cdates = false, r
                                        break;
                                      }
                                 chart.showLoading('Loading data from database...');
-                                window.location.href= dayplotsurl+"?units="+units.temp+","+units.pressure+","+units.wind+","+units.rain+"&plot_type="+plot_type+","+pathjsondayfiles+jsonfileforplot[plot_type][0]+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+epoch/1000
+                                window.location.href= dayplotsurl+"?units="+units.temp+","+units.pressure+","+units.wind+","+units.rain+"&plot_type="+plot_type+","+pathjsondayfiles+","+jsonfileforplot[plot_type][0].join(":")+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+epoch/1000
                             }
                             else
                                 setTimeout(display_chart, 0, units, plot_type, ['yearly'])}}
@@ -1700,6 +1690,7 @@ $.datepicker.setDefaults({
     dateFormat: 'yy-mm-dd',
     onSelect: function(dateText) {
         chart.showLoading('Loading data from database...');
-        window.location.href= dayplotsurl+"?units="+url_units.temp+","+url_units.pressure+","+url_units.wind+","+url_units.rain+"&plot_type="+url_plot_type+","+pathjsondayfiles+jsonfileforplot[url_plot_type][0]+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+(new Date(this.value).getTime()/1000);
+        window.location.href= dayplotsurl+"?units="+url_units.temp+","+url_units.pressure+","+url_units.wind+","+url_units.rain+"&plot_type="+url_plot_type+","+pathjsondayfiles+"," +jsonfileforplot[url_plot_type][0].join(":")+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+(new Date(this.value).getTime()/1000);
     }
 });
+
