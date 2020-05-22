@@ -662,6 +662,36 @@ class w34highcharts_solar_week(SearchList):
         except:
                 infrared_json = None    
                                                        
+        # Create energy json
+        try:
+                (time_start_vt, time_stop_vt, energy_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'energy')
+                energyRound = int(self.generator.skin_dict['Units']['StringFormats'].get(energy_vt[1], "1f")[-2])
+                energyRound_vt = [roundNone(x,energyRound) if x != None else 0 for x in energy_vt[0]]
+                energyTime_ms = [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
+                energy_json = json.dumps(list(zip(energyTime_ms, energyRound_vt)))
+        except:
+                energy_json = None
+                
+        # Create distance json
+        try:
+                (time_start_vt, time_stop_vt, distance_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'avg_distance')
+                distanceRound = int(self.generator.skin_dict['Units']['StringFormats'].get(distance_vt[1], "1f")[-2])
+                distanceRound_vt =  [roundNone(x,distanceRound) if x != None else 0 for x in distance_vt[0]]
+                distanceTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
+                distance_json = json.dumps(list(zip(distanceTime_ms, distanceRound_vt)))
+        except:
+                distance_json = None
+                
+        # Create strikes json
+        try:
+                (time_start_vt, time_stop_vt, strikes_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_strikes')
+                strikesRound = int(self.generator.skin_dict['Units']['StringFormats'].get(strikes_vt[1], "1f")[-2])
+                strikesRound_vt =  [roundNone(x,strikesRound) if x != None else 0 for x in strikes_vt[0]]
+                strikesTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
+                strikes_json = json.dumps(list(zip(strikesTime_ms, strikesRound_vt)))
+        except Exception as e:
+                strikes_json = None
+
         # Create air quality pm2_5
         try:
                 (time_start_vt, time_stop_vt, pm2_5_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'pm2_5')
@@ -694,6 +724,9 @@ class w34highcharts_solar_week(SearchList):
                                  'full_spectrumWeek_json' : spectrum_json,
                                  'luxWeek_json' : lux_json,
                                  'infraredWeek_json' : infrared_json,
+                                 'strikesWeek_json' : strikes_json,
+                                 'distanceWeek_json' : distance_json ,
+                                 'energyWeek_json' : energy_json,
                                  'pm2_5Week_json' : pm2_5_json,
                                  'pm10_0Week_json' : pm10_0_json,
                                  'utcOffset': utc_offset,
@@ -1232,12 +1265,12 @@ class w34highchartsYear(SearchList):
                 
         # Create strikes json
         try:
-                (strikes_time_vt, strikes_dict) = getDaySummaryVectors(db_lookup(), 'lightning_strikes', timespan,['sum'])
-                strikesPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(strikes_dict['sum'][1], "1f")[-2])
-                strikesSumRound = [roundNone(x,strikesPlaces) for x in strikes_dict['sum'][0]]
-                strikesSum_json = json.dumps(list(zip(time_ms, strikesSumRound)))
+                (strikes_time_vt, strikes_dict) = getDaySummaryVectors(db_lookup(), 'lightning_strikes', timespan,['count'])
+                strikesPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(strikes_dict['count'][1], "1f")[-2])
+                strikesCountRound = [roundNone(x,strikesPlaces) for x in strikes_dict['count'][0]]
+                strikesCount_json = json.dumps(list(zip(time_ms, strikesCountRound)))
         except:
-                strikesSum_json = None
+                strikesCount_json = None
 
         # Create full_spectrum json
         try:
@@ -1344,7 +1377,7 @@ class w34highchartsYear(SearchList):
                                  'uvaWmAvg_json' : uvaWmAvg_json,
                                  'uvbWmMax_json' : uvbWmMax_json,
                                  'uvbWmAvg_json' : uvbWmAvg_json,
-                                 'strikesSum_json' : strikesSum_json,
+                                 'strikesSum_json' : strikesCount_json,
                                  'distanceMax_json' : distanceMax_json ,
                                  'distanceAvg_json' : distanceAvg_json,
                                  'energyMax_json' : energyMax_json,
