@@ -26,51 +26,58 @@
     </body> 
 </html>
 <?php
-    if (isset($weexserver_address) and isset($weexserver_port)){
-      $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-      socket_connect($socket, $weexserver_address, $weexserver_port);
-    }
-    else
-      putenv("PYTHONPATH=".$_GET['weewxpathbin']);
     $plot_info = explode(",",$_GET['plot_type']);
     $units = explode(",",$_GET['units']);
-    if (file_exists($plot_info[1]))
-      unlink($plot_info[1]);
-    $cmd = $plot_info[2]." ".$_GET['epoch']." ".$plot_info[1].".tmpl ".getcwd();
-    #print($cmd);
-    if (isset($_GET['epoch1'])){
-      if (file_exists($plot_info[3]))
-        unlink($plot_info[3]);
-      if (isset($weexserver_address) and isset($weexserver_port)) {
-        socket_write($socket, $cmd, strlen($cmd));
-        @socket_read($socket, 1, PHP_NORMAL_READ);
-        socket_close($socket);
-      }
-      else
-        $output = shell_exec(escapeshellcmd($cmd));
-      rename($plot_info[1], $plot_info[3]);
-      $cmd = $plot_info[2]." ".$_GET['epoch1']." ".$plot_info[1].".tmpl ".getcwd();
-      #print($cmd);
-      if (isset($weexserver_address) and isset($weexserver_port)) {
+    $filenames = explode(":", $plot_info[2]);
+    for ($i = 0; $i < sizeof($filenames); $i++){ 
+      if (isset($weexserver_address) and isset($weexserver_port)){
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         socket_connect($socket, $weexserver_address, $weexserver_port);
-        socket_write($socket, $cmd, strlen($cmd));
-        @socket_read($socket, 1, PHP_NORMAL_READ);
-        socket_close($socket);
       }
       else
-        $output = shell_exec(escapeshellcmd($cmd));
+        putenv("PYTHONPATH=".$_GET['weewxpathbin']);
+      $filename = $plot_info[1].$filenames[$i];
+      if (file_exists($filename))
+        unlink($filename);
+      $cmd = $plot_info[3]." ".$_GET['epoch']." ".$filename.".tmpl ".getcwd();
+      #print($cmd);
+      if (isset($_GET['epoch1'])){
+        $s_file1 = explode(".", $filename)[0]."1.json";
+        if (file_exists($s_file1))
+          unlink($s_file1);
+        if (isset($weexserver_address) and isset($weexserver_port)) {
+          socket_write($socket, $cmd, strlen($cmd));
+          @socket_read($socket, 1, PHP_NORMAL_READ);
+          socket_close($socket);
+        }
+        else
+          $output = shell_exec(escapeshellcmd($cmd));
+        rename($filename, $s_file1);
+        $cmd = $plot_info[3]." ".$_GET['epoch1']." ".$filename.".tmpl ".getcwd();
+        #print($cmd);
+        if (isset($weexserver_address) and isset($weexserver_port)) {
+          $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+          socket_connect($socket, $weexserver_address, $weexserver_port);
+          socket_write($socket, $cmd, strlen($cmd));
+          @socket_read($socket, 1, PHP_NORMAL_READ);
+          socket_close($socket);
+        }
+        else
+          $output = shell_exec(escapeshellcmd($cmd));
+      }
+      else {
+        if (isset($weexserver_address) and isset($weexserver_port)){
+          socket_write($socket, $cmd, strlen($cmd));
+          @socket_read($socket, 1, PHP_NORMAL_READ);
+          socket_close($socket);
+        }
+        else
+          $output = shell_exec(escapeshellcmd($cmd));
+      }
+    }
+    if (isset($_GET['epoch1']))
       echo "<script> display_chart({temp:"."'".$units[0]."',pressure:"."'".$units[1]."',wind:"."'".$units[2]."',rain:"."'".$units[3]."'},'".$plot_info[0]."','weekly',false,true,'".$plot_info[4]."',".$plot_info[5].");</script>";
-    }
-    else {
-      if (isset($weexserver_address) and isset($weexserver_port)){
-        socket_write($socket, $cmd, strlen($cmd));
-        @socket_read($socket, 1, PHP_NORMAL_READ);
-        socket_close($socket);
-      }
-      else
-        $output = shell_exec(escapeshellcmd($cmd));
-      echo "<script> display_chart({temp:"."'".$units[0]."',pressure:"."'".$units[1]."',wind:"."'".$units[2]."',rain:"."'".$units[3]."'},'".$plot_info[0]."','weekly',true,false,'".$plot_info[3]."',".$plot_info[4].");</script>";
-    }
+    else
+      echo "<script> display_chart({temp:"."'".$units[0]."',pressure:"."'".$units[1]."',wind:"."'".$units[2]."',rain:"."'".$units[3]."'},'".$plot_info[0]."','weekly',true,false,'".$plot_info[4]."',".$plot_info[5].");</script>";
 ?> 
 
