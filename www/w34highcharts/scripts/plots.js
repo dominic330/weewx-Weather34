@@ -137,7 +137,6 @@ var chart;
 var url_units;
 var url_plot_type;
 var first_tp_display = true;
-var hide_zero_wind_barb = false;
 
 /*****************************************************************************
 Read multiple json files at the same time found at this URL
