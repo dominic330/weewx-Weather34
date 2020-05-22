@@ -19,7 +19,7 @@ var createweeklyfunctions = {
     windallplot: [addWeekOptions, create_windall_chart],
     winddirplot: [addWeekOptions, create_winddir_chart],
     windroseplot: [addWindRoseOptions, setWindRose, create_windrose_chart],
-    lightningplot: [addYearOptions, create_lightning_chart],
+    lightningplot: [addWeekOptions, create_lightning_chart],
     rainplot: [addWeekOptions, create_rain_chart],
     rainmonthplot: [create_rain_month_chart],
     luminosityplot: [addWeekOptions, create_luminosity_chart],
@@ -95,7 +95,7 @@ var jsonfileforplot = {
     rainplot: [['bar_rain_week.json'],['year.json'],[null]],
     rainmonthplot: [['year.json'],['year.json'],[null]],
     rainsmallplot: [['bar_rain_week.json'],['year.json'],[null]],
-    lightningplot: [['year.json'],['year.json'],[null]],
+    lightningplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
     luminosityplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
     radiationplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
     raduvplot: [['solar_week.json'],['year.json'],['solar_week1.json']],
@@ -110,7 +110,7 @@ var humcolors = [[0,"#3369e7"],[10,"#3b9cac"],[20,"#00a4b4"],[30,"#00a4b4"],[40,
 var barcolors = [[28.0,"#3369e7"],[28.25,"#3b9cac"],[28.5,"#00a4b4"],[28.75,"#00a4b4"],[29.0,"#88b04b"],[29.25,"#e6a141"],[29.5,"#ff7c39"],[29.75,"#efa80f"],[30.0,"#d05f2d"],[30.25,"#d86858"],[30.5,"#fd7641"],[30.75,"#de2c52"],[31,"#de2c52"]];
 var windcolors = [[0,"#3369e7"],[2.5,"#3b9cac"],[5,"#00a4b4"],[7.5,"#00a4b4"],[10,"#88b04b"],[12.5,"#e6a141"],[15,"#ff7c39"],[17.5,"#efa80f"],[20,"#d05f2d"],[22.5,"#d86858"],[25,"#fd7641"],[27.5,"#de2c52"],[30,"#de2c52"]];
 var aqcolors = [[50,"#90b12a"],[100,"#ba923a"],[150,"#ff7c39"],[200,"#ff7c39"],[300,"#916392"],[400,"#d05041"]];
-var plotsnoswitch = ['rainmonthplot','windroseplot','lightningplot','bartempwindplot','windbarplot'];
+var plotsnoswitch = ['rainmonthplot','windroseplot','bartempwindplot','windbarplot'];
 var radialplots = ['dewpointplot','temperatureplot','indoorplot','humidityplot','barometerplot','tempderivedplot','windplot','airqualityplot'];
 var monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var windrosespans = ["1h","24h","Week","Month","Year"];
@@ -145,7 +145,7 @@ https://stackoverflow.com/questions/19026331/call-multiple-json-data-files-in-on
 jQuery.getMultipleJSON = function(){
   return jQuery.when.apply(jQuery, jQuery.map(arguments, function(jsonfile){
     return jQuery.getJSON(jsonfile).fail(function(){
-      alert("!!!!NO DATA FOUND in database. Please choose another date!!!! " + jsonfile.split("/")[1]);return true;});
+      alert("!!!!NO DATA FOUND in database. Please choose another date!!!!\n" + jsonfile);return true;});
   })).then(function(){
     var def = jQuery.Deferred();
     return def.resolve.apply(def, jQuery.map(arguments, function(response){
@@ -1156,20 +1156,44 @@ function create_rain_month_chart(options, span, seriesData, units){
 };
 
 function create_lightning_chart(options, span, seriesData, units){
-    options = create_chart_options(options, 'column', 'Lightning Distance/Strikes/Energy Max & Avg/Sum', null, [['Distance Max', 'column'], ['Distance Avg', 'column'], ['Strikes Sum', 'column',1], ['Energy Max', 'column',2], ['Energy Avg', 'column',2]]);
-    options.series[0].data = reinflate_time(seriesData[0].lightningplot.distanceMax);
-    options.series[1].data = reinflate_time(seriesData[0].lightningplot.distanceAvg);
-    options.series[2].data = reinflate_time(seriesData[0].lightningplot.strikesSum);
-    options.series[3].data = reinflate_time(seriesData[0].lightningplot.energyMax);
-    options.series[4].data = reinflate_time(seriesData[0].lightningplot.energyAvg);
-    options.yAxis[0].title.text = "Average Distance";
+    if (span[0] == "yearly"){
+        options = create_chart_options(options, 'column', 'Lightning Distance/Strikes/Energy Max & Avg/Cnt', null, [['Distance Max', 'column'], ['Distance Avg', 'column'], ['Strikes Cnt', 'column',1], ['Energy Max', 'column',2], ['Energy Avg', 'column',2]]);
+        options.series[0].data = reinflate_time(seriesData[0].lightningplot.distanceMax);
+        options.series[1].data = reinflate_time(seriesData[0].lightningplot.distanceAvg);
+        options.series[2].data = reinflate_time(seriesData[0].lightningplot.strikesSum);
+        options.series[3].data = reinflate_time(seriesData[0].lightningplot.energyMax);
+        options.series[4].data = reinflate_time(seriesData[0].lightningplot.energyAvg);
+    }else if (span[0] == "weekly"){
+        if (compare_dates)
+            options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'column',1], ['Energy', 'column',2],['Strikes', 'column',,,,,1], ['Distance', 'column',1,,,,1], ['Energy', 'column',2,,,,1]]);
+        else
+            options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'column',1], ['Energy', 'column',2]]);
+        options.series[0].data = reinflate_time(seriesData[0].lightningplot.strikesWeek);
+        options.series[1].data = reinflate_time(seriesData[0].lightningplot.distanceWeek);
+        options.series[2].data = reinflate_time(seriesData[0].lightningplot.energyWeek);
+        if (compare_dates){
+            create_compare_days_ts(options.series[0].data, seriesData[1].lightningplot.strikesWeek);
+            options.series[3].data = reinflate_time(seriesData[1].lightningplot.strikesWeek, options.series[0].data[0][0]);
+            options.series[4].data = reinflate_time(seriesData[1].lightningplot.distanceWeek, options.series[0].data[0][0]);
+            options.series[5].data = reinflate_time(seriesData[1].lightningplot.energyWeek, options.series[0].data[0][0]);
+        }
+    }
     options.yAxis[0].min = 0;
+    options.yAxis[0].title.text = "Strikes";
     options.yAxis[0].allowDecimals = true;
-    options.yAxis[1].title.text = "Number of Strikes";
     options.yAxis[1].min = 0;
-    options.yAxis[2].title.text = "Energy";
+    options.yAxis[1].title.text = "Distance";
+    options.yAxis[1].allowDecimals = true;
     options.yAxis[2].min = 0;
+    options.yAxis[2].title.text = "Energy";
+    options.yAxis[2].allowDecimals = true;
     options.xAxis[0].minTickInterval =0;
+
+    plotOptions: {
+        series: {
+            pointWidth: 20
+        }
+    };
     return options;
 };
 
@@ -1413,7 +1437,7 @@ function create_aq_chart(options, span, seriesData, units){
     }
     options.yAxis[0].min = 0;
     options.yAxis[0].minorTickInterval = 1;
-    options.yAxis[0].title.text = "(μg/㎥)";
+    options.yAxis[0].title.text = "(?g/?)";
     return options;
 };
 
@@ -1679,4 +1703,3 @@ $.datepicker.setDefaults({
         window.location.href= dayplotsurl+"?units="+url_units.temp+","+url_units.pressure+","+url_units.wind+","+url_units.rain+"&plot_type="+url_plot_type+","+pathjsondayfiles+jsonfileforplot[url_plot_type][0]+","+weereportcmd+","+reload_plot_type+":"+reload_span+",false"+"&weewxpathbin="+pathweewxbin+"&epoch="+(new Date(this.value).getTime()/1000);
     }
 });
-
