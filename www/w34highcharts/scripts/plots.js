@@ -95,7 +95,7 @@ var jsonfileforplot = {
     rainplot: [['bar_rain_week.json'],['year.json']],
     rainmonthplot: [['year.json'],['year.json']],
     rainsmallplot: [['bar_rain_week.json'],['year.json']],
-    lightningplot: [['solar_week.json'],['year.json']],
+    lightningplot: [['bar_rain_week.json'],['year.json']],
     luminosityplot: [['solar_week.json'],['year.json']],
     radiationplot: [['solar_week.json'],['year.json']],
     raduvplot: [['solar_week.json'],['year.json']],
