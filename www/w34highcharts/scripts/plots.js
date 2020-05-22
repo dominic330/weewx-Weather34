@@ -585,6 +585,14 @@ function reinflate_time(series, ts_start = null, returnDate = false){
     return series;
 };
 
+function remove_zero_dps(seriesData){
+    data = [];
+    for (var i = 0; i < seriesData.length; i++)
+        if (i == 0 || i == seriesData.length -1 || seriesData[i][1] > 0)
+            data.push(seriesData[i]);
+    return data;
+}
+
 function create_compare_days_ts(series, series1){
     compare_dates_ts = [];
     var a = series.map(function(arr){return arr.slice(0,1);});
@@ -1098,7 +1106,7 @@ function setRainSmall(options) {
 function create_rain_chart(options, span, seriesData, units){
     if (span[0] == "yearly"){
         options = create_chart_options(options, 'column', 'RainFall', units.rain,[['RainFall', 'column']]);
-        options.series[0].data = convert_rain(seriesData[0].rainplot.units, units.rain, reinflate_time(seriesData[0].rainplot.rainsum));
+        options.series[0].data = remove_zero_dps(convert_rain(seriesData[0].rainplot.units, units.rain, reinflate_time(seriesData[0].rainplot.rainsum)));
         options.plotOptions.column.dataGrouping.dateTimeLabelFormats.hour = ['%e %B %Y', '%e %B %Y %H:%M', '-%H:%M'];
     }
     if (span[0] == "weekly"){
@@ -1153,24 +1161,24 @@ function create_rain_month_chart(options, span, seriesData, units){
 function create_lightning_chart(options, span, seriesData, units){
     if (span[0] == "yearly"){
         options = create_chart_options(options, 'column', 'Lightning Distance/Strikes/Energy Max & Avg/Cnt', null, [['Distance Max', 'column'], ['Distance Avg', 'column'], ['Strikes Cnt', 'column',1], ['Energy Max', 'column',2], ['Energy Avg', 'column',2]]);
-        options.series[0].data = reinflate_time(seriesData[0].lightningplot.distanceMax);
-        options.series[1].data = reinflate_time(seriesData[0].lightningplot.distanceAvg);
-        options.series[2].data = reinflate_time(seriesData[0].lightningplot.strikesSum);
-        options.series[3].data = reinflate_time(seriesData[0].lightningplot.energyMax);
-        options.series[4].data = reinflate_time(seriesData[0].lightningplot.energyAvg);
+        options.series[0].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.distanceMax));
+        options.series[1].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.distanceAvg));
+        options.series[2].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.strikesSum));
+        options.series[3].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.energyMax));
+        options.series[4].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.energyAvg));
     }else if (span[0] == "weekly"){
         if (compare_dates)
             options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'column',1], ['Energy', 'column',2],['Strikes', 'column',,,,,1], ['Distance', 'column',1,,,,1], ['Energy', 'column',2,,,,1]]);
         else
-            options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'scatter',1], ['Energy', 'scatter',2]]);
-        options.series[0].data = reinflate_time(seriesData[0].lightningplot.strikesWeek);
-        options.series[1].data = reinflate_time(seriesData[0].lightningplot.distanceWeek);
-        options.series[2].data = reinflate_time(seriesData[0].lightningplot.energyWeek);
+            options = create_chart_options(options, 'column', 'Lightning Strikes/Distance/Energy', null, [['Strikes', 'column'], ['Distance', 'column',1], ['Energy', 'column',2]]);
+        options.series[0].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.strikesWeek));
+        options.series[1].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.distanceWeek));
+        options.series[2].data = remove_zero_dps(reinflate_time(seriesData[0].lightningplot.energyWeek));
         if (compare_dates){
             create_compare_days_ts(options.series[0].data, seriesData[1].lightningplot.strikesWeek);
-            options.series[3].data = reinflate_time(seriesData[1].lightningplot.strikesWeek, options.series[0].data[0][0]);
-            options.series[4].data = reinflate_time(seriesData[1].lightningplot.distanceWeek, options.series[0].data[0][0]);
-            options.series[5].data = reinflate_time(seriesData[1].lightningplot.energyWeek, options.series[0].data[0][0]);
+            options.series[3].data = remove_zero_dps(reinflate_time(seriesData[1].lightningplot.strikesWeek, options.series[0].data[0][0]));
+            options.series[4].data = remove_zero_dps(reinflate_time(seriesData[1].lightningplot.distanceWeek, options.series[0].data[0][0]));
+            options.series[5].data = remove_zero_dps(reinflate_time(seriesData[1].lightningplot.energyWeek, options.series[0].data[0][0]));
         }
     }
     options.yAxis[0].min = 0;
