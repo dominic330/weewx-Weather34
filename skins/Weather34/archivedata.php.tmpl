@@ -267,7 +267,11 @@ $weewxapi[170] = "$yesterday.outHumidity.mintime.format(format_string="%Y%m%d%H%
 $weewxapi[200] = "$current.windrun.format(add_label=False, $localize=False)";
 $weewxapi[201] = "$span($time_delta=3600).windGust.max.format(add_label=False, $localize=False)";
 $weewxapi[202] = "$span($hour_delta=3).rain.sum.format(add_label=False, $localize=False)";
-
+$weewxapi[203] = $weewxw34[57]; # lightning_distance
+$weewxapi[204] = $weewxw34[58]; # lightning_energy
+$weewxapi[205] = $weewxw34[59]; # lightning_strike_count
+$weewxapi[206] = $weewxw34[60]; # lightning_noise_count
+$weewxapi[207] = $weewxw34[61]; # lightning_disturber_count
 
     $startcivil = "$almanac(horizon=-6).sun(use_center=1).rise.raw";
     $endcivil = "$almanac(horizon=-6).sun(use_center=1).set.raw";
