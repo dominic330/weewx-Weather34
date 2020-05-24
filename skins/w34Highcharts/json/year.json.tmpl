@@ -81,8 +81,14 @@
 #if $distanceAvg_json is not None
 "distanceAvg": $distanceAvg_json, 
 #end if
-#if $strikesSum_json is not None
-"strikesSum": $strikesSum_json, 
+#if $strikeCount_json is not None
+"strikeCount": $strikeCount_json, 
+#end if
+#if $noiseCount_json is not None
+"noiseCount": $noiseCount_json, 
+#end if
+#if $disturberCount_json is not None
+"disturberCount": $disturberCount_json, 
 #end if
 #if $energyMax_json is not None
 "energyMax": $energyMax_json, 

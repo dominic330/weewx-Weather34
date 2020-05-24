@@ -36,8 +36,14 @@
 },
 ##
 "lightningplot": {
-#if $strikesWeek_json is not None
-"strikesWeek": $strikesWeek_json,
+#if $strikeCountWeek_json is not None
+"strikeCountWeek": $strikeCountWeek_json,
+#end if
+#if $noiseCountWeek_json is not None
+"noiseCountWeek": $noiseCountWeek_json,
+#end if
+#if $disturberCountWeek_json is not None
+"disturberCountWeek": $disturberCountWeek_json,
 #end if
 #if $distanceWeek_json is not None
 "distanceWeek": $distanceWeek_json,
