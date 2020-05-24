@@ -370,7 +370,7 @@ class w34highcharts_bar_rain_week(SearchList):
 
         # Create energy json
         try:
-                (time_start_vt, time_stop_vt, energy_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'energy')
+                (time_start_vt, time_stop_vt, energy_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_energy')
                 energyRound = int(self.generator.skin_dict['Units']['StringFormats'].get(energy_vt[1], "1f")[-2])
                 energyRound_vt = [roundNone(x,energyRound) if x != None else 0 for x in energy_vt[0]]
                 energyTime_ms = [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
@@ -380,7 +380,7 @@ class w34highcharts_bar_rain_week(SearchList):
                 
         # Create distance json
         try:
-                (time_start_vt, time_stop_vt, distance_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'avg_distance')
+                (time_start_vt, time_stop_vt, distance_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_distance')
                 distanceRound = int(self.generator.skin_dict['Units']['StringFormats'].get(distance_vt[1], "1f")[-2])
                 distanceRound_vt =  [roundNone(x,distanceRound) if x != None else 0 for x in distance_vt[0]]
                 distanceTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
@@ -388,22 +388,44 @@ class w34highcharts_bar_rain_week(SearchList):
         except:
                 distance_json = None
                 
-        # Create strikes json
+        # Create strike count json
         try:
-                (time_start_vt, time_stop_vt, strikes_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_strikes')
-                strikesRound = int(self.generator.skin_dict['Units']['StringFormats'].get(strikes_vt[1], "1f")[-2])
-                strikesRound_vt =  [roundNone(x,strikesRound) if x != None else 0 for x in strikes_vt[0]]
-                strikesTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
-                strikes_json = json.dumps(list(zip(strikesTime_ms, strikesRound_vt)))
+                (time_start_vt, time_stop_vt, strike_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_strike_count')
+                strikeRound = int(self.generator.skin_dict['Units']['StringFormats'].get(strike_vt[1], "1f")[-2])
+                strikeRound_vt =  [roundNone(x,strikeRound) if x != None else 0 for x in strike_vt[0]]
+                strikeTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
+                strikeCount_json = json.dumps(list(zip(strikeTime_ms, strikeRound_vt)))
         except Exception as e:
-                strikes_json = None
+                strikeCount_json = None
+
+        # Create noise count json
+        try:
+                (time_start_vt, time_stop_vt, noise_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_noise_count')
+                noiseRound = int(self.generator.skin_dict['Units']['StringFormats'].get(noise_vt[1], "1f")[-2])
+                noiseRound_vt =  [roundNone(x,noiseRound) if x != None else 0 for x in noise_vt[0]]
+                noiseTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
+                noiseCount_json = json.dumps(list(zip(noiseTime_ms, noiseRound_vt)))
+        except Exception as e:
+                noiseCount_json = None
+
+        # Create disturber count json
+        try:
+                (time_start_vt, time_stop_vt, disturber_vt) = db_lookup().getSqlVectors(TimeSpan(_start_ts, timespan.stop), 'lightning_disturber_count')
+                disturberRound = int(self.generator.skin_dict['Units']['StringFormats'].get(disturber_vt[1], "1f")[-2])
+                disturberRound_vt =  [roundNone(x,disturberRound) if x != None else 0 for x in disturber_vt[0]]
+                disturberTime_ms =  [time_stop_vt[0][0] if (x == 0) else time_stop_vt[0][x] - time_stop_vt[0][0] for x in range(len(time_stop_vt[0]))]
+                disturberCount_json = json.dumps(list(zip(disturberTime_ms, disturberRound_vt)))
+        except Exception as e:
+                disturberCount_json = None
 
         # Put into a dictionary to return
         self.search_list_extension = {
                                  'barometerWeekjson' : barometer_json,
                                  'rainWeekjson' : rain_json,
                                  'rainRateWeekjson' : rainRate_json,
-                                 'strikesWeek_json' : strikes_json,
+                                 'strikeCountWeek_json' : strikeCount_json,
+                                 'noiseCountWeek_json' : noiseCount_json,
+                                 'disturberCountWeek_json' : disturberCount_json,
                                  'distanceWeek_json' : distance_json,
                                  'energyWeek_json' : energy_json,
                                  'utcOffset': utc_offset,
@@ -1245,7 +1267,7 @@ class w34highchartsYear(SearchList):
                                             
         # Create energy json
         try:
-                (energy_time_vt, energy_dict) = getDaySummaryVectors(db_lookup(), 'energy', timespan,['max', 'avg'])
+                (energy_time_vt, energy_dict) = getDaySummaryVectors(db_lookup(), 'lightning_energy', timespan,['max', 'avg'])
                 time_ms = [energy_time_vt[0][0] if (x == 0) else energy_time_vt[0][x] - energy_time_vt[0][0] for x in range(len(energy_time_vt[0]))]
                 energyPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(energy_dict['max'][1], "1f")[-2])
                 energyMaxRound = [roundNone(x,energyPlaces) for x in energy_dict['max'][0]]
@@ -1258,7 +1280,7 @@ class w34highchartsYear(SearchList):
                 
         # Create distance json
         try:
-                (distance_time_vt, distance_dict) = getDaySummaryVectors(db_lookup(), 'avg_distance', timespan,['max', 'avg'])
+                (distance_time_vt, distance_dict) = getDaySummaryVectors(db_lookup(), 'lightning_distance', timespan,['max', 'avg'])
                 time_ms = [distance_time_vt[0][0] if (x == 0) else distance_time_vt[0][x] - distance_time_vt[0][0] for x in range(len(distance_time_vt[0]))]
                 distancePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(distance_dict['max'][1], "1f")[-2])
                 distanceMaxRound = [roundNone(x,distancePlaces) for x in distance_dict['max'][0]]
@@ -1269,15 +1291,35 @@ class w34highchartsYear(SearchList):
                 distanceMax_json = None
                 distanceAvg_json = None
                 
-        # Create strikes json
+        # Create strike count json
         try:
-                (strikes_time_vt, strikes_dict) = getDaySummaryVectors(db_lookup(), 'lightning_strikes', timespan,['count'])
-                time_ms = [strikes_time_vt[0][0] if (x == 0) else strikes_time_vt[0][x] - strikes_time_vt[0][0] for x in range(len(strikes_time_vt[0]))]
-                strikesPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(strikes_dict['count'][1], "1f")[-2])
-                strikesCountRound = [roundNone(x,strikesPlaces) for x in strikes_dict['count'][0]]
-                strikesCount_json = json.dumps(list(zip(time_ms, strikesCountRound)))
+                (strike_time_vt, strike_dict) = getDaySummaryVectors(db_lookup(), 'lightning_strike_count', timespan,['count'])
+                time_ms = [strike_time_vt[0][0] if (x == 0) else strike_time_vt[0][x] - strike_time_vt[0][0] for x in range(len(strike_time_vt[0]))]
+                strikePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(strike_dict['count'][1], "1f")[-2])
+                strikeCountRound = [roundNone(x,strikePlaces) for x in strike_dict['count'][0]]
+                strikeCount_json = json.dumps(list(zip(time_ms, strikeCountRound)))
         except Exception as e:
-                strikesCount_json = None
+                strikeCount_json = None
+
+        # Create noise count json
+        try:
+                (noise_time_vt, noise_dict) = getDaySummaryVectors(db_lookup(), 'lightning_noise_count', timespan,['count'])
+                time_ms = [noise_time_vt[0][0] if (x == 0) else noise_time_vt[0][x] - noise_time_vt[0][0] for x in range(len(noise_time_vt[0]))]
+                noisePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(noise_dict['count'][1], "1f")[-2])
+                noiseCountRound = [roundNone(x,noisePlaces) for x in noise_dict['count'][0]]
+                noiseCount_json = json.dumps(list(zip(time_ms, noiseCountRound)))
+        except Exception as e:
+                noiseCount_json = None
+
+        # Create disturber count json
+        try:
+                (disturber_time_vt, disturber_dict) = getDaySummaryVectors(db_lookup(), 'lightning_disturber_count', timespan,['count'])
+                time_ms = [disturber_time_vt[0][0] if (x == 0) else disturber_time_vt[0][x] - disturber_time_vt[0][0] for x in range(len(disturber_time_vt[0]))]
+                disturberPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(disturber_dict['count'][1], "1f")[-2])
+                disturberCountRound = [roundNone(x,disturberPlaces) for x in disturber_dict['count'][0]]
+                disturberCount_json = json.dumps(list(zip(time_ms, disturberCountRound)))
+        except Exception as e:
+                disturberCount_json = None
 
         # Create full_spectrum json
         try:
@@ -1389,7 +1431,9 @@ class w34highchartsYear(SearchList):
                                  'uvaWmAvg_json' : uvaWmAvg_json,
                                  'uvbWmMax_json' : uvbWmMax_json,
                                  'uvbWmAvg_json' : uvbWmAvg_json,
-                                 'strikesSum_json' : strikesCount_json,
+                                 'strikeCount_json' : strikeCount_json,
+                                 'noiseCount_json' : noiseCount_json,
+                                 'disturberCount_json' : disturberCount_json,
                                  'distanceMax_json' : distanceMax_json ,
                                  'distanceAvg_json' : distanceAvg_json,
                                  'energyMax_json' : energyMax_json,
