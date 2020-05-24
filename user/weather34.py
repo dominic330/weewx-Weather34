@@ -923,7 +923,11 @@ class Weather34RealTime(StdService):
         fields.append(self.format(data, 'appTemp', 1))                # 55 *
         fields.append(self.format(data, 'sunshine_hours', 1))         # 56 *
         fields.append(self.format(data, 'maxSolarRad', 1))            # 57
-        fields.append(self.format(data, 'is_sunny'))                  # 58 *
+        fields.append(self.format(data, 'lightning_distance'))        # 58 *
+        fields.append(self.format(data, 'lightning_energy'))          # 59 *
+        fields.append(self.format(data, 'lightning_strike_count'))    # 60 *
+        fields.append(self.format(data, 'lightning_noise_count'))     # 61 *
+        fields.append(self.format(data, 'lightning_disturber_count')) # 62 *
         return ' '.join(fields)
       
       
