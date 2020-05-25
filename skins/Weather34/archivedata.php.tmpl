@@ -6,11 +6,6 @@
 #encoding UTF-8
 ##
 <?php
-$weewxw34_live = file_get_contents($livedata);
-$weewxw34 = explode(" ", $weewxw34_live);
-$weewxw34 = array_map(function($v) { if($v == 'NULL') {
-	return null; } return $v; }, $weewxw34);
-if (sizeof($weewxw34) >= 47){
 ##		Calculate lenght of daylight
 
 	#set $daylenght = time.strftime('%H:%M', time.gmtime(int($almanac.sun.set.raw -  $almanac.sun.rise.raw)))
@@ -90,31 +85,11 @@ if (sizeof($weewxw34) >= 47){
 #######################SAME ORDER AS METEOBRIDGEAPI
 
 
-$weewxapi[0] = $weewxw34[0];
-$weewxapi[1] = $weewxw34[1];
-$weewxapi[2] = $weewxw34[2];
-$weewxapi[3] = $weewxw34[3];
-$weewxapi[4] = $weewxw34[4];
-$weewxapi[5] = $weewxw34[5];
-$weewxapi[6] = $weewxw34[6];
-$weewxapi[7] = $weewxw34[7];
-$weewxapi[8] = $weewxw34[8];    
-$weewxapi[9] = $weewxw34[9];
-$weewxapi[10] = $weewxw34[10];
-$weewxapi[11] = $weewxw34[11];
-$weewxapi[12] = $weewxw34[12];
-$weewxapi[13] = $weewxw34[13];
-$weewxapi[14] = $weewxw34[14];
-$weewxapi[15] = $weewxw34[15];
-$weewxapi[16] = $weewxw34[16];
 $weewxapi[17] = "$span($time_delta=300).windSpeed.avg.format(add_label=False, $localize=False)";
 $weewxapi[18] = "$span($hour_delta=1).barometer.avg.format(add_label=False, $localize=False)";
 $weewxapi[19] = "$month.rain.sum.format(add_label=False, $localize=False)";
 $weewxapi[20] = "$rainyear.rain.sum.format(add_label=False, $localize=False)";
 $weewxapi[21] = "$yesterday.rain.sum.format(add_label=False, $localize=False)";
-$weewxapi[22] = $weewxw34[22];
-$weewxapi[23] = $weewxw34[23];
-$weewxapi[24] = $weewxw34[24]; ## "$current.windchill.format(add_label=False, $localize=False)";
 $weewxapi[25] = "$span($hour_delta=1).outTemp.max.format(add_label=False, $localize=False)";
 $weewxapi[26] = "$day.outTemp.max.format(add_label=False, $localize=False)";
 $weewxapi[27] = "$day.outTemp.maxtime.format(format_string="%Y%m%d%H%M%S")";
@@ -130,14 +105,9 @@ $weewxapi[36] = "$day.barometer.min.format(add_label=False, $localize=False)";
 $weewxapi[37] = "$day.barometer.mintime.format(format_string="%H:%M")";
 ## $daymaxintemp = "$day.inTemp.max.format(add_label=False, $localize=False)";
 ## $dayminintemp = "$day.inTemp.min.format(add_label=False, $localize=False)"; 
-$weewxapi[38] = $weewxw34[38];
-$weewxapi[39] = $weewxw34[39];
 $weewxapi[40] = "$current.windGust.format(add_label=False, $localize=False)";
 $weewxapi[41] = "--";
-$weewxapi[42] = $weewxw34[42]; ## "$current.heatindex.format(add_label=False, $localize=False)";
-$weewxapi[43] = $weewxw34[43];
 $weewxapi[44] = "$span($hour_delta=24).rain.sum.format(add_label=False, $localize=False)";
-$weewxapi[45] = $weewxw34[45];
 $weewxapi[46] = "$span($time_delta=600).windDir.avg.format(add_label=False, $localize=False)";
 $weewxapi[47] = "$span($hour_delta=1).rain.sum.format(add_label=False, $localize=False)";
 $weewxapi[48] = "$month.dewpoint.max.format(add_label=False, $localize=False)";
@@ -268,7 +238,6 @@ $weewxapi[200] = "$current.windrun.format(add_label=False, $localize=False)";
 $weewxapi[201] = "$span($time_delta=3600).windGust.max.format(add_label=False, $localize=False)";
 $weewxapi[202] = "$span($hour_delta=3).rain.sum.format(add_label=False, $localize=False)";
 
-
     $startcivil = "$almanac(horizon=-6).sun(use_center=1).rise.raw";
     $endcivil = "$almanac(horizon=-6).sun(use_center=1).set.raw";
     $rain_year_start = "$rainyear.start.format(format_string="%b -")";
@@ -293,5 +262,5 @@ $weewxapi[202] = "$span($hour_delta=3).rain.sum.format(add_label=False, $localiz
  
 	## $current_heatindex = "$current.heatindex.format(add_label=False, $localize=False)";
 	
-}
     ?>
+
