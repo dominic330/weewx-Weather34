@@ -11,79 +11,72 @@
  include('settings.php');include('shared.php');error_reporting(0); 
 //weewx - api December 2019 
 
-	include('archivedata.php');
-        if (isset($weewxapi)){
-	$weather["rain_alltime"] = $weewxapi[151];
-		
-
-
-	
-		$year = substr($weewxapi[0], 6);
-	if ($livedataFormat == 'WeeWX-W34') {
-		
-		if (isset($weewxapi[23])) {
-			$weewxapi[23] = (float)(1*$weewxapi[23]);
-			$weewxapi[23] = number_format((float)$weewxapi[23],0,'.','');
-		}	
-	}
-	
-	$recordDate = mktime(substr($weewxapi[1], 0, 2), substr($weewxapi[1], 3, 2), substr($weewxapi[1], 6, 2),
-	substr($weewxapi[0], 3, 2), substr($weewxapi[0], 0, 2), $year);
+    include('archivedata.php');
+    $weewxrt = array_map(function($v) { if($v == 'NULL') { return null; } return $v; }, explode(" ", file_get_contents($livedata)));
+    if (isset($weewxapi)){
+        $weather["rain_alltime"] = $weewxapi[151];
+        $year = substr($weewxrt[0], 6);
+        if ($livedataFormat == 'WeeWX-W34') {
+     	    if (isset($weewxrt[23])) {
+	        $weewxrt[23] = (float)(1*$weewxrt[23]);
+	        $weewxrt[23] = number_format((float)$weewxrt[23],0,'.','');
+  	    }	
+        }
+	$recordDate = mktime(substr($weewxrt[1], 0, 2), substr($weewxrt[1], 3, 2), substr($weewxrt[1], 6, 2),
+	substr($weewxrt[0], 3, 2), substr($weewxrt[0], 0, 2), $year);
 	$weather["datetime"]           = $recordDate;
 	$weather["date"]               = date($dateFormat, $recordDate);
 	$weather["time"]               = date($timeFormat, $recordDate);
-	$weather["barometer"]          = $weewxapi[10];
+	$weather["barometer"]          = $weewxrt[10];
 	$weather["barometer_max"]      = $weewxapi[34];
 	$weather["barometer_min"]      = $weewxapi[36];
-	$weather["barometer_units"]    = $weewxapi[15]; // mb or hPa or in
-	$weather["barometer_trend"]    = $weewxapi[10] - $weewxapi[18];
-	$weather["temp_units"]         = $weewxapi[14]; // C
-	$weather["temp_indoor"]        = $weewxapi[22];
-	$weather["temp_indoor_feel"]   = heatIndex($weewxapi[22], $weewxapi[23]); // must set temp_units first
+	$weather["barometer_units"]    = $weewxrt[15]; // mb or hPa or in
+	$weather["barometer_trend"]    = $weewxrt[10] - $weewxapi[18];
+	$weather["temp_units"]         = $weewxrt[14]; // C
+	$weather["temp_indoor"]        = $weewxrt[22];
+	$weather["temp_indoor_feel"]   = heatIndex($weewxrt[22], $weewxrt[23]); // must set temp_units first
 	$weather["temp_indoormax"]     = $weewxapi[120];
 	$weather["temp_indoormin"]     = $weewxapi[121];
-	$weather["humidity_indoor"]    = $weewxapi[23];
+	$weather["humidity_indoor"]    = $weewxrt[23];
 	$weather["humidity_indoor15"]=$weewxapi[71];
-	$weather["humidity_indoortrend"]=$weewxapi[23]-$weewxapi[71];
-	$weather["rain_rate"]          = $weewxapi[8];
-	$weather["dewpoint"]           = number_format($weewxapi[4],1);
-	$weather["rain_today"]         = $weewxapi[9];
+	$weather["humidity_indoortrend"]=$weewxrt[23]-$weewxapi[71];
+	$weather["rain_rate"]          = $weewxrt[8];
+	$weather["dewpoint"]           = number_format($weewxrt[4],1);
+	$weather["rain_today"]         = $weewxrt[9];
 	$weather["rain_lasthour"]      = $weewxapi[47];
-        $weather["rain_last3hours"]    = $weewxapi[202];
 	$weather["rain_month"]         = $weewxapi[19];
 	$weather["rain_year"]          = $weewxapi[20];
 	$weather["rain_24hrs"]         = $weewxapi[44];
-	$weather["rain_units"]         = $weewxapi[16]; // mm or in
-	$weather["uv"]                 = $weewxapi[43];
-	$weather["solar"]              = round($weewxapi[45],1);
-	$weather["temp"]               = $weewxapi[2];
-	//$weather["temp_feel"]          = heatIndex($weewxapi[2], $weewxapi[3]); // must set temp_units first
-	//$weather["heat_index"]         = $weather["temp_feel"]; // must set temp_units first
-	$weather["heat_index"]         = $weewxapi[42];
-	$weather["windchill"]          = $weewxapi[24];
-	//$weather["realfeel"]           = $weather["windchill"];
-    $weather["humidity"]           = number_format($weewxapi[3],0);	
+	$weather["rain_units"]         = $weewxrt[16]; // mm or in
+	$weather["uv"]                 = $weewxrt[43];
+	$weather["solar"]              = round($weewxrt[45],1);
+	$weather["temp"]               = $weewxrt[2];
+	$weather["temp_feel"]          = heatIndex($weewxrt[2], $weewxapi[3]); // must set temp_units first
+	$weather["heat_index"]         = $weather["temp_feel"]; // must set temp_units first
+	//$weather["heat_index"]         = $weewxrt[42];
+	$weather["windchill"]          = $weewxrt[24];
+	$weather["humidity"]           = number_format($weewxrt[3],0);	
 	$weather["temp_today_high"]    = $weewxapi[26];
 	$weather["temp_today_low"]     = $weewxapi[28];
 	$weather["temp_avg15"]         = $weewxapi[67];
 	$weather["temp_avg"]           = $weewxapi[123]; // last 60 minutes
-	$weather["wind_speed_avg"]     = $weewxapi[5]; //Console's Average Wind Speed
-	$weather["wind_direction"]     = number_format($weewxapi[7],0);
+	$weather["wind_speed_avg"]     = $weewxrt[5]; //Console's Average Wind Speed
+	$weather["wind_direction"]     = number_format($weewxrt[7],0);
 	$weather["wind_direction_avg"] = number_format($weewxapi[46],0);
-	$weather["wind_speed"]         = $weewxapi[6]; // Instant Wind Speed
-	$weather["wind_gust_60min"]    = $weewxapi[201]; // Wind Speed Gust - Max speed of last 60 minutes
-	$weather["wind_gust_speed"]    = $weewxapi[40]; // 10 Minutes
-	$weather["wind_speed_bft"]     = $weewxapi[12];
+	$weather["wind_speed"]         = number_format($weewxrt[6]); // Instant Wind Speed
+	$weather["wind_gust_10min"]    = $weewxapi[40]; // Wind Speed Gust - Max speed of last 10 minutes
+	$weather["wind_gust_speed"]    = $weewxapi[40]; // 
+	$weather["wind_speed_bft"]     = $weewxrt[12];
 	$weather["wind_speed_max"]     = $weewxapi[30];	
 	$weather["wind_gust_speed_max"]= $weewxapi[32];	
-	$weather["wind_units"]         = $weewxapi[13]; // m/s or mph or km/h or kts
+	$weather["wind_units"]         = $weewxrt[13]; // m/s or mph or km/h or kts
 	$weather["wind_speed_avg15"]   = $weewxapi[72];
 	$weather["wind_speed_avg30"]   = $weewxapi[73];
 	$weather["sunshine"]           = $weewxapi[55];
 	$weather["maxsolar"]           = number_format($weewxapi[80],0);
 	$weather["maxuv"]              = $weewxapi[58];	
 	$weather["sunny"]              = $weewxapi[57];
-	$weather["lux"] 	       = number_format($weewxapi[45]/0.00809399477,0, '.', '');
+	$weather["lux"] 	       = number_format($weewxrt[45]/0.00809399477,0, '.', '');
 	$weather["maxtemptime"]        = date($timeFormatShort, $weewxapi[27]);
 	$weather["lowtemptime"]        = date($timeFormatShort, $weewxapi[29]);
 	$weather["maxwindtime"]        = date($timeFormatShort, $weewxapi[31]);
@@ -92,8 +85,8 @@
 	$weather["cloudbase_units"]    = 'ft' ;	
 	$weather["wind_run"]           = number_format($weather["wind_speed"]/24,3); //10 minute wind run
 	$weather["swversion"]	       = $weewxapi[38];
-	$weather["build"]	       = $weewxapi[39];
-	$weather["actualhardware"]     = $weewxapi[42];
+	$weather["build"]	       = $weewxrt[39];
+	$weather["actualhardware"]     = $weewxrt[42];
 	$weather["mbplatform"]	       = $weewxapi[41];
 	$weather["uptime"]	       = $weewxapi[81];//uptime in seconds
 	$weather["vpforecasttext"]     = $weewxapi1[1];//davis console forecast text
@@ -103,14 +96,28 @@
 	//weather34 windrun
 	$windrunhr=date('G');$windrunmin=(($windrunmin=date('i')/60));
 	$windrunformula=$windrunhr=date('G')+$windrunmin;
-        $weather["windrun34"] = $weewxapi[200];      
-	//$weather["windrun34"]=$weather['wind_speed_avg30']*number_format($windrunformula,1);
+	$weather["windrun34"]=$weather['wind_speed_avg30']*number_format($windrunformula,1);
 	//weather34 weewx moon sun data 
-        $weather["moonphase"]=$weewxapi[153];$weather["luminance"]=$weewxapi[154];$weather["daylight"]=$weewxapi[155];if ($weewxapi[156]=='--'){$weather["moonrise"]='In Transit';}
+    $weather["moonphase"]=$weewxapi[153];$weather["luminance"]=$weewxapi[154];$weather["daylight"]=$weewxapi[155];if ($weewxapi[156]=='--'){$weather["moonrise"]='In Transit';}
 	else $weather["moonrise"]='Rise<moonrisecolor> '.date($timeFormatShort, strtotime($weewxapi[156]));$weather["moonset"]='Set<moonsetcolor> '.date($timeFormatShort, strtotime($weewxapi[157]));
-	//weather34 weewx real feel 02-08-2018 based on cumulus forum formula (THW)
-	$weather['realfeel'] = round(($weather['temp'] + 0.33*($weather['humidity']/100)*6.105*exp(17.27*$weather['temp']/(237.7+$weather['temp']))- 0.70*$weather["wind_speed"] - 4.00),1);
-	//uptimealt
+	
+        //weather34 weewx real feel 02-08-2018 based on cumulus forum formula (THW)
+	//$weather['realfeel'] = round(($weather['temp'] + 0.33*($weather['humidity']/100)*6.105*exp(17.27*$weather['temp']/(237.7+$weather['temp']))- 0.70*$weather["wind_speed"] - 4.00),1);
+    if ($weather['temp'] <= 50 and $weather["wind_speed"] >= 3){
+        $vFeelsLike = 35.74 + (0.6215*$weather['temp']) - 35.75*($weather["wind_speed"]**0.16) + ((0.4275*$weather['temp'])*($weather["wind_speed"]**0.16));}
+    else{
+        $vFeelsLike = $weather['temp'];}
+    if ($vFeelsLike == $weather['temp'] and $weather['temp'] >= 80){
+        $vFeelsLike = 0.5 * ($weather['temp'] + 61.0 + (($weather['temp']-68.0)*1.2) + ($weather['humidity']*0.094));}
+        if ($vFeelsLike >= 80){
+            $vFeelsLike = -42.379 + 2.04901523*$weather['temp'] + 10.14333127*$weather['humidity'] - .22475541*$weather['temp']*$weather['humidity'] - .00683783*$weather['temp']*$weather['temp'] - .05481717*$weather['humidity']*$weather['humidity'] + .00122874*$weather['temp']*$weather['temp']*$weather['humidity'] + .00085282*$weather['temp']*$weather['humidity']*$weather['humidity'] - .00000199*$weather['temp']*$weather['temp']*$weather['humidity']*$weather['humidity'];}
+            if ($weather['humidity'] < 13 and $weather['temp'] >= 80 and $weather['temp'] <= 112){
+                $vFeelsLike = $vFeelsLike - ((13-$weather['humidity'])/4)*sqrt((17-abs($weather['temp']-95.))/17);}
+                if ($weather['humidity'] > 85 and $weather['temp'] >= 80 and $weather['temp'] <= 87){
+                    $vFeelsLike = $vFeelsLike + (($weather['humidity']-85)/10) * ((87-$weather['temp'])/5);}
+    $weather['realfeel'] =  round($vFeelsLike,1);
+	
+        //uptimealt
 	$convertuptimemb34 = $weather["uptime"];$uptimedays = floor($convertuptimemb34 / 86400);$uptimehours = floor(($convertuptimemb34 -($uptimedays*86400)) / 3600);
 	//amusing indoor real feel
 	$weather["dewpoint2"] = round(((pow(($weather["humidity_indoor"]/100), 0.125))*(112+0.9*$weather["temp_indoor"] )+(0.1*$weather["temp_indoor"] )-112),1);
@@ -122,6 +129,12 @@ if ($weather['luminance']<100){$weather['luminance']=$weather['luminance'];}
 //weather34 convert weewx lunar segment
 if ($weather["moonphase"]==0) {$weather["moonphase"]='New Moon';}else if ($weather["moonphase"]==1) {$weather["moonphase"]='Waxing Crescent';}else if ($weather["moonphase"]==2 ) {$weather["moonphase"]='First Quarter';}else if ($weather["moonphase"]==3 ) {$weather["moonphase"]='Waxing Gibbous';}else if ($weather["moonphase"]==4 ) {$weather["moonphase"]='Full Moon';}else if ($weather["moonphase"]==5) {$weather["moonphase"]='Waning Gibbous';}else if ($weather["moonphase"]==6) {$weather["moonphase"]='Last Quarter';}else if ($weather["moonphase"]==7){$weather["moonphase"]='Waning Crescent';}
 	
+	$weather["lightning_distance"]        = $weewxapi[57];
+	$weather["lightning_energy"]          = $weewxapi[58];
+	$weather["lightning_strike_count"]    = $weewxapi[59];
+	$weather["lightning_noise_count"]     = $weewxapi[60];
+	$weather["lightning_disturber_count"] = $weewxapi[61];
+
 	// weatherflow lightning
 	$weather["lightning"]          = $weewxapi[76];
 	$weather["lightningkm"]        = $weewxapi[75];
@@ -428,13 +441,13 @@ $weather["humidity_ydmintime"]=$humydmintime;
 	
 		
 	//trends will update 15 minutes after a reboot or power failure
-	$weather["temp_trend"]         =  number_format($weewxapi[2],1) -  number_format($weewxapi[67],1) ;
+	$weather["temp_trend"]         =  number_format($weewxrt[2],1) -  number_format($weewxapi[67],1) ;
 	$weather["humidity_trend"]     =  number_format($weewxapi[3],0) -  number_format($weewxapi[68],0);
-	$weather["dewpoint_trend"]     =  number_format($weewxapi[4],1) -  number_format($weewxapi[69],1);
-	$weather["temp_indoor_trend"]  =  number_format($weewxapi[22],1) - number_format($weewxapi[70],1);//indoor
-	$weather["temp_humidity_trend"] = number_format($weewxapi[23],1) - number_format($weewxapi[71],1);//indoor
-	$weather["barotrend"] =   $weewxapi[10] -  $barotrend[0];	
-	$weather['barometer6h'] = $weewxapi[10] - $weewxapi[73];
+	$weather["dewpoint_trend"]     =  number_format($weewxrt[4],1) -  number_format($weewxapi[69],1);
+	$weather["temp_indoor_trend"]  =  number_format($weewxrt[22],1) - number_format($weewxapi[70],1);//indoor
+	$weather["temp_humidity_trend"] = number_format($weewxrt[23],1) - number_format($weewxapi[71],1);//indoor
+	$weather["barotrend"] =   $weewxrt[10] -  $barotrend[0];	
+	$weather['barometer6h'] = $weewxrt[10] - $weewxapi[73];
 	$weather['winddir6h'] =	 $weewxapi[72];
 	$weather["dirtrend"] =$dirtrend[0];
 	
@@ -545,7 +558,6 @@ if ($rainunit != $weather["rain_units"]) {
 		inTomm($weather, "rain_year");
 		inTomm($weather, "rainydmax");
 		inTomm($weather, "rain_lasthour");
-                inTomm($weather, "rain_last3hours");
 		inTomm($weather, "rainymax");		
 		inTomm($weather, "rainmmax");
 		inTomm($weather, "rain_24hrs");	
@@ -559,7 +571,6 @@ if ($rainunit != $weather["rain_units"]) {
 		mmToin($weather, "rain_year");
 		mmToin($weather, "rainydmax");
 		mmToin($weather, "rain_lasthour");
-                mmToin($weather, "rain_last3hours");
 		mmToin($weather, "rainymax");		
 		mmToin($weather, "rainmmax");
 		mmToin($weather, "rain_24hrs");
@@ -665,7 +676,7 @@ if ($weather["wind_units"] == 'mph') {
 date_default_timezone_set($TZ);
 $json = 'jsondata/darksky.txt'; 
 $json = file_get_contents($json); 
-$response = json_decode($json, true);       
+$response = json_decode($json, true);      
 if ($response != null) {
   //darksky api Current SKY Conditions
   $darkskycurTime = $response['currently']['time'];
@@ -687,7 +698,12 @@ if ($response != null) {
   $darkskydayCond= array();
     foreach ($response['daily']['data'] as $d) {
       $darkskydayCond[] = $d;
-    }}
+    }
+  $darkskyalerts= array();
+  foreach ($response['alerts'] as $td) {
+     $darkskyalerts[] = $td;
+  }
+}
 //end darksky api and convert winspeed below
 
 
