@@ -53,10 +53,8 @@ $parsed_weather34wujson = json_decode($weather34wuurl,false);
 <div class="wulargeforecasthome"><div class="wulargediv">
 <div class="eqcirclehomeregional"><div class="eqtexthomeregional">
 <?php
-if ($lightning_strike_count > 0){echo '<spanelightning><alertvalue><orange>Lightning Detected Near By Take Cover</orange><alertadvisory>'.$newalert.'</alertadvisory>
-  </spanelightning></div></div></div>';}
 ///METEOALARM
-else if (strpos($alertlevel,'Yellow') !== false)
+if (strpos($alertlevel,'Yellow') !== false)
   {echo '<spanelightning><alertvalue><a href="meteoalarm.php" title="Meteoalarm" alt="Meteoalarm" data-lity><yellow>Yellow Alert '.$alerttype.'<br>Until '.$alertexp.'</yellow><alertadvisory>'.$newalertcold.'</alertadvisory>
    </spanelightning></div></div></div>';}
 else if (strpos($alertlevel,'Orange') !== false)
