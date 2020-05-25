@@ -53,8 +53,10 @@ $parsed_weather34wujson = json_decode($weather34wuurl,false);
 <div class="wulargeforecasthome"><div class="wulargediv">
 <div class="eqcirclehomeregional"><div class="eqtexthomeregional">
 <?php
+if ($lightning_strike_count > 0){echo '<spanelightning><alertvalue><orange>Lightning Detected Near By Take Cover</orange><alertadvisory>'.$newalert.'</alertadvisory>
+  </spanelightning></div></div></div>';}
 ///METEOALARM
-if (strpos($alertlevel,'Yellow') !== false)
+else if (strpos($alertlevel,'Yellow') !== false)
   {echo '<spanelightning><alertvalue><a href="meteoalarm.php" title="Meteoalarm" alt="Meteoalarm" data-lity><yellow>Yellow Alert '.$alerttype.'<br>Until '.$alertexp.'</yellow><alertadvisory>'.$newalertcold.'</alertadvisory>
    </spanelightning></div></div></div>';}
 else if (strpos($alertlevel,'Orange') !== false)
@@ -154,12 +156,15 @@ else if ($wuskythunder1>0 && $position6=="forecast3wularge.php"){echo '<spanelig
    </spanelightning></div></div></div>';}
     else if ($wuskyrain7>0 && $position6=="forecast3wu.php"){echo '<spanelightning><alertvalue> Expect <blue>Rain Showers</blue> This Week <alertadvisory>'.$newalertcold.'</alertadvisory>
    </spanelightning></div></div></div>';}  
-  //weather34 darksky alerts rain,snow  
+  //weather34 darksky alerts rain,snow,other  
   else if ($darkskydayIcon=='snow' && $position6=="forecast3ds.php")
   {echo '<spanelightning>'.$snowalert.'<alertvalue> Expect <blue>Snow Showers</blue> This Week <alertadvisory>'.$newalertcold.'</alertadvisory>
    </spanelightning></div></div></div>';}   
     else if ($darkskydayIcon=='rain' && $position6=="forecast3ds.php")
   {echo '<spanelightning><alertvalue> Expect <blue>Rain Showers</blue> This Week <alertadvisory>'.$newalertcold.'</alertadvisory>
+   </spanelightning></div></div></div>';} 
+    else if (count($darkskyalerts) > 0 && $position6=="forecast3ds.php")
+  {echo '<spanelightning><alertvalue>DarkSky <orange>Alerts</orange><br>This Week <alertadvisory>'.$newalertcold.'</alertadvisory>
    </spanelightning></div></div></div>';} 
  //WEATHER34 solar eclipse events and no alerts 
  else {echo '<spanelightning><alertvalue>'.$eclipse_default.'</spanelightning></div></div></div>';}   
