@@ -1293,30 +1293,30 @@ class w34highchartsYear(SearchList):
                 
         # Create strike count json
         try:
-                (strike_time_vt, strike_dict) = getDaySummaryVectors(db_lookup(), 'lightning_strike_count', timespan,['count'])
+                (strike_time_vt, strike_dict) = getDaySummaryVectors(db_lookup(), 'lightning_strike_count', timespan,['sum'])
                 time_ms = [strike_time_vt[0][0] if (x == 0) else strike_time_vt[0][x] - strike_time_vt[0][0] for x in range(len(strike_time_vt[0]))]
-                strikePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(strike_dict['count'][1], "1f")[-2])
-                strikeCountRound = [roundNone(x,strikePlaces) for x in strike_dict['count'][0]]
+                strikePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(strike_dict['sum'][1], "1f")[-2])
+                strikeCountRound = [roundNone(x,strikePlaces) for x in strike_dict['sum'][0]]
                 strikeCount_json = json.dumps(list(zip(time_ms, strikeCountRound)))
         except Exception as e:
                 strikeCount_json = None
 
         # Create noise count json
         try:
-                (noise_time_vt, noise_dict) = getDaySummaryVectors(db_lookup(), 'lightning_noise_count', timespan,['count'])
+                (noise_time_vt, noise_dict) = getDaySummaryVectors(db_lookup(), 'lightning_noise_count', timespan,['sum'])
                 time_ms = [noise_time_vt[0][0] if (x == 0) else noise_time_vt[0][x] - noise_time_vt[0][0] for x in range(len(noise_time_vt[0]))]
-                noisePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(noise_dict['count'][1], "1f")[-2])
-                noiseCountRound = [roundNone(x,noisePlaces) for x in noise_dict['count'][0]]
+                noisePlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(noise_dict['sum'][1], "1f")[-2])
+                noiseCountRound = [roundNone(x,noisePlaces) for x in noise_dict['sum'][0]]
                 noiseCount_json = json.dumps(list(zip(time_ms, noiseCountRound)))
         except Exception as e:
                 noiseCount_json = None
 
         # Create disturber count json
         try:
-                (disturber_time_vt, disturber_dict) = getDaySummaryVectors(db_lookup(), 'lightning_disturber_count', timespan,['count'])
+                (disturber_time_vt, disturber_dict) = getDaySummaryVectors(db_lookup(), 'lightning_disturber_count', timespan,['sum'])
                 time_ms = [disturber_time_vt[0][0] if (x == 0) else disturber_time_vt[0][x] - disturber_time_vt[0][0] for x in range(len(disturber_time_vt[0]))]
-                disturberPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(disturber_dict['count'][1], "1f")[-2])
-                disturberCountRound = [roundNone(x,disturberPlaces) for x in disturber_dict['count'][0]]
+                disturberPlaces = int(self.generator.skin_dict['Units']['StringFormats'].get(disturber_dict['sum'][1], "1f")[-2])
+                disturberCountRound = [roundNone(x,disturberPlaces) for x in disturber_dict['sum'][0]]
                 disturberCount_json = json.dumps(list(zip(time_ms, disturberCountRound)))
         except Exception as e:
                 disturberCount_json = None
