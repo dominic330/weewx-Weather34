@@ -84,7 +84,7 @@
 	$weather["cloudbase"]          = round(($weather["temp"] - $weather["dewpoint"] ) *1000/4.4,1) ; 
 	$weather["cloudbase_units"]    = 'ft' ;	
 	$weather["wind_run"]           = number_format($weather["wind_speed"]/24,3); //10 minute wind run
-	$weather["swversion"]	       = $weewxapi[38];
+	$weather["swversion"]	       = $weewxrt[38];
 	$weather["build"]	       = $weewxrt[39];
 	$weather["actualhardware"]     = $weewxrt[42];
 	$weather["mbplatform"]	       = $weewxapi[41];
