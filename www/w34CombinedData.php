@@ -810,3 +810,4 @@ $weather['stationLowBattery']	= intval($weewxapi[172]); # Station battery, 0 whe
 #	}
 #}
 ?>
+
