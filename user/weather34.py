@@ -604,12 +604,7 @@ class Weather34RealTime(StdService):
             self.bind(weewx.NEW_LOOP_PACKET, self.newLoopPacket)
 
         # configure the binding
-        binding = d.get('binding', 'loop').lower()
-        loginf("binding is %s" % binding)
-        if binding == 'loop':
-            self.bind(weewx.NEW_LOOP_PACKET, self.handle_new_loop)
-        else:
-            self.bind(weewx.NEW_ARCHIVE_RECORD, self.handle_new_archive)
+        self.bind(weewx.NEW_LOOP_PACKET, self.handle_new_loop)
 
     def newLoopPacket(self, event):
         if self.retainedLoopValues == None or len(self.retainedLoopValues) == 0:
@@ -639,9 +634,6 @@ class Weather34RealTime(StdService):
 
     def handle_new_loop(self, event):
         self.handle_data(event.packet)
-
-    def handle_new_archive(self, event):
-        self.handle_data(event.record)
 
     def handle_data(self, event_data):
         try:
@@ -923,7 +915,11 @@ class Weather34RealTime(StdService):
         fields.append(self.format(data, 'appTemp', 1))                # 55 *
         fields.append(self.format(data, 'sunshine_hours', 1))         # 56 *
         fields.append(self.format(data, 'maxSolarRad', 1))            # 57
-        fields.append(self.format(data, 'is_sunny'))                  # 58 *
+        fields.append(self.format(data, 'lightning_distance'))        # 58 *
+        fields.append(self.format(data, 'lightning_energy'))          # 59 *
+        fields.append(self.format(data, 'lightning_strike_count'))    # 60 *
+        fields.append(self.format(data, 'lightning_noise_count'))     # 61 *
+        fields.append(self.format(data, 'lightning_disturber_count')) # 62 *
         return ' '.join(fields)
       
       
