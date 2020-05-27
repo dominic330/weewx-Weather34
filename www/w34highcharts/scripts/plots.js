@@ -967,12 +967,11 @@ function create_windall_chart(options, span, seriesData, units){
         if (do_realtime)
             options = create_chart_options(options, 'spline', 'Average Wind Speed/Gust/Direction', units.wind,[['Avg Wind Speed', 'spline'], ['Avg Wind Gust', 'spline'], ['Avg Wind Direction', 'scatter',1,,,{valueSuffix: '\xB0'}]]);
         else
-            options = create_chart_options(options, 'scatter', 'Wind Speed/Gust/Direction', units.wind,[['Wind Speed', 'spline'],['Wind Gust', 'spline'],['Wind Direction', 'scatter',1,,,{valueSuffix: '\xB0'}]]);
+            options = create_chart_options(options, 'spline', 'Wind Speed/Gust/Direction', units.wind,[['Wind Speed', 'spline'],['Wind Gust', 'spline'],['Wind Direction', 'spline',1,,,{valueSuffix: '\xB0'}]]);
         options.series[0].data = reinflate_time(convert_wind(seriesData[0].windplot.units, units.wind, seriesData[0].windplot.windSpeed));
         options.series[1].data = reinflate_time(convert_wind(seriesData[0].windplot.units, units.wind, seriesData[0].windplot.windGust));
         options.series[2].data = reinflate_time(seriesData[0].winddirplot.windDir);
     }
-    options.tooltip.shared = false;
     options.yAxis[0].min = 0;
     options.yAxis[0].title.text = "(" + units.wind + ")";
     options.yAxis[1].title.text = "Direction";
