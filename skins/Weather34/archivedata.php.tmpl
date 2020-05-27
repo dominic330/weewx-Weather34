@@ -7,15 +7,10 @@
 ##
 <?php
 ##		Calculate lenght of daylight
-
 	#set $daylenght = time.strftime('%H:%M', time.gmtime(int($almanac.sun.set.raw -  $almanac.sun.rise.raw)))
-
 ##		Truncate station uptime decimals
-
 	#set $stationuptime = str($station.os_uptime.raw).split('.')[0] 	
-
 ##		Calculate Beaufort based on wind speed in knots
-      
           #if $varExists('$current.windSpeed') and $current.windSpeed.raw is not None
           #if $unit.unit_type.windSpeed == 'mile_per_hour'
           #set $kts = $current.windSpeed.raw * 0.8689762
@@ -58,7 +53,6 @@
           #else
             #set $beaufort = 'N/A'
           #end if
-	
          #if $almanac.moon_phase.lower() == "New".lower()
             #set $moonphase = "0"
           #else if $almanac.moon_phase.lower() == "Waxing Crescent".lower()
@@ -76,15 +70,10 @@
 	  #else if $almanac.moon_phase.lower() == "Waning Crescent".lower()
             #set $moonphase = "7"
           #end if 
-          
           #import time
 #set almost_end = $rainyear.end.raw - 1
 #set almost_end_tt = $time.localtime($almost_end)
-
-
 #######################SAME ORDER AS METEOBRIDGEAPI
-
-
 $weewxapi[17] = "$span($time_delta=300).windSpeed.avg.format(add_label=False, $localize=False)";
 $weewxapi[18] = "$span($hour_delta=1).barometer.avg.format(add_label=False, $localize=False)";
 $weewxapi[19] = "$month.rain.sum.format(add_label=False, $localize=False)";
@@ -238,29 +227,22 @@ $weewxapi[200] = "$current.windrun.format(add_label=False, $localize=False)";
 $weewxapi[201] = "$span($time_delta=3600).windGust.max.format(add_label=False, $localize=False)";
 $weewxapi[202] = "$span($hour_delta=3).rain.sum.format(add_label=False, $localize=False)";
 
-    $startcivil = "$almanac(horizon=-6).sun(use_center=1).rise.raw";
-    $endcivil = "$almanac(horizon=-6).sun(use_center=1).set.raw";
-    $rain_year_start = "$rainyear.start.format(format_string="%b -")";
-    $rain_year_end = "$time.strftime("%b", $almost_end_tt)";	
-    $daymaxrainrate = "$day.rainRate.max.format(add_label=False, $localize=False)";
-	$daymaxrainratetime = "$day.rainRate.maxtime.format(format_string="%Y%m%d%H%M%S")";
-	$yesterdaymaxrainratetime = "$yesterday.rainRate.maxtime.format(format_string="%Y%m%d%H%M%S")";
-	$alltimemaxrainrate = "$alltime.rainRate.max.format(add_label=False, $localize=False)";
-	$alltimemaxrainratetime = "$alltime.rainRate.maxtime.format(format_string="%Y%m%d%H%M%S")";
-	
-
-	$yesterdaymaxwind = "$yesterday.windSpeed.max.format(add_label=False, $localize=False)";
-	$yesterdaymaxwindtime = "$yesterday.windSpeed.maxtime.format(format_string="%Y%m%d%H%M%S")";
-	$monthmaxwind = "$month.windSpeed.max.format(add_label=False, $localize=False)";
-	$monthmaxwindtime = "$month.windSpeed.maxtime.format(format_string="%Y%m%d%H%M%S")";
-	$yearmaxwind = "$year.windSpeed.max.format(add_label=False, $localize=False)";
-	$yearmaxwindtime = "$year.windSpeed.maxtime.format(format_string="%Y%m%d%H%M%S")";
-	
-	
-	## $current_windchill = "$current.windchill.format(add_label=False, $localize=False)";   
-    
- 
-	## $current_heatindex = "$current.heatindex.format(add_label=False, $localize=False)";
-	
-    ?>
+$startcivil = "$almanac(horizon=-6).sun(use_center=1).rise.raw";
+$endcivil = "$almanac(horizon=-6).sun(use_center=1).set.raw";
+$rain_year_start = "$rainyear.start.format(format_string="%b -")";
+$rain_year_end = "$time.strftime("%b", $almost_end_tt)";	
+$daymaxrainrate = "$day.rainRate.max.format(add_label=False, $localize=False)";
+$daymaxrainratetime = "$day.rainRate.maxtime.format(format_string="%Y%m%d%H%M%S")";
+$yesterdaymaxrainratetime = "$yesterday.rainRate.maxtime.format(format_string="%Y%m%d%H%M%S")";
+$alltimemaxrainrate = "$alltime.rainRate.max.format(add_label=False, $localize=False)";
+$alltimemaxrainratetime = "$alltime.rainRate.maxtime.format(format_string="%Y%m%d%H%M%S")";
+$yesterdaymaxwind = "$yesterday.windSpeed.max.format(add_label=False, $localize=False)";
+$yesterdaymaxwindtime = "$yesterday.windSpeed.maxtime.format(format_string="%Y%m%d%H%M%S")";
+$monthmaxwind = "$month.windSpeed.max.format(add_label=False, $localize=False)";
+$monthmaxwindtime = "$month.windSpeed.maxtime.format(format_string="%Y%m%d%H%M%S")";
+$yearmaxwind = "$year.windSpeed.max.format(add_label=False, $localize=False)";
+$yearmaxwindtime = "$year.windSpeed.maxtime.format(format_string="%Y%m%d%H%M%S")";
+## $current_windchill = "$current.windchill.format(add_label=False, $localize=False)";   
+## $current_heatindex = "$current.heatindex.format(add_label=False, $localize=False)";
+?>
 
