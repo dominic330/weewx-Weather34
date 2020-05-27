@@ -604,12 +604,7 @@ class Weather34RealTime(StdService):
             self.bind(weewx.NEW_LOOP_PACKET, self.newLoopPacket)
 
         # configure the binding
-        binding = d.get('binding', 'loop').lower()
-        loginf("binding is %s" % binding)
-        if binding == 'loop':
-            self.bind(weewx.NEW_LOOP_PACKET, self.handle_new_loop)
-        else:
-            self.bind(weewx.NEW_ARCHIVE_RECORD, self.handle_new_archive)
+        self.bind(weewx.NEW_LOOP_PACKET, self.handle_new_loop)
 
     def newLoopPacket(self, event):
         if self.retainedLoopValues == None or len(self.retainedLoopValues) == 0:
@@ -639,9 +634,6 @@ class Weather34RealTime(StdService):
 
     def handle_new_loop(self, event):
         self.handle_data(event.packet)
-
-    def handle_new_archive(self, event):
-        self.handle_data(event.record)
 
     def handle_data(self, event_data):
         try:
