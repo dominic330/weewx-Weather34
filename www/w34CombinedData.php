@@ -52,8 +52,8 @@
 	$weather["solar"]              = round($weewxrt[45],1);
 	$weather["temp"]               = $weewxrt[2];
 	$weather["temp_feel"]          = heatIndex($weewxrt[2], $weewxapi[3]); // must set temp_units first
-	$weather["heat_index"]         = $weather["temp_feel"]; // must set temp_units first
-	//$weather["heat_index"]         = $weewxrt[42];
+	//$weather["heat_index"]         = $weather["temp_feel"]; // must set temp_units first
+	$weather["heat_index"]         = $weewxrt[41];
 	$weather["windchill"]          = $weewxrt[24];
 	$weather["humidity"]           = number_format($weewxrt[3],0);	
 	$weather["temp_today_high"]    = $weewxapi[26];
@@ -86,7 +86,7 @@
 	$weather["wind_run"]           = number_format($weather["wind_speed"]/24,3); //10 minute wind run
 	$weather["swversion"]	       = $weewxrt[38];
 	$weather["build"]	       = $weewxrt[39];
-	$weather["actualhardware"]     = $weewxrt[42];
+	$weather["actualhardware"]     = $weewxapi[42];
 	$weather["mbplatform"]	       = $weewxapi[41];
 	$weather["uptime"]	       = $weewxapi[81];//uptime in seconds
 	$weather["vpforecasttext"]     = $weewxapi1[1];//davis console forecast text
@@ -810,4 +810,3 @@ $weather['stationLowBattery']	= intval($weewxapi[172]); # Station battery, 0 whe
 #	}
 #}
 ?>
-
